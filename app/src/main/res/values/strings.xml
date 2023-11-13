@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Eltex-Android</string>
+    <string name="app_name">Android School</string>
+    <string name="hello_eltex" translatable="false">Hello Eltex!</string>
 </resources>
