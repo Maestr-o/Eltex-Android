@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Android School</string>
     <string name="hello_eltex" translatable="false">Hello Eltex!</string>
+    <string name="avatar">avatar</string>
+    <string name="menu">menu</string>
+    <string name="offline">Offline</string>
+    <string name="online">Online</string>
+    <string name="share">share</string>
+    <string name="like">like</string>
+    <string name="participant">participate</string>
 </resources>
