@@ -72,16 +72,18 @@
             app:layout_constraintTop_toBottomOf="@id/authorOffset"
             tools:text="11.05.22 11:21" />
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/menu"
+            style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="40dp"
             android:layout_height="@dimen/button_height"
             android:layout_marginEnd="4dp"
             android:contentDescription="@string/menu"
-            android:padding="8dp"
+            android:padding="5dp"
+            app:icon="@drawable/baseline_more_vert_24"
+            app:iconSize="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/avatar"
-            app:srcCompat="@drawable/baseline_more_vert_24" />
+            app:layout_constraintTop_toTopOf="@id/avatar" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/headerBarrier"

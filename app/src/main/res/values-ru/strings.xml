@@ -8,4 +8,5 @@
     <string name="share">поделиться</string>
     <string name="like">лайк</string>
     <string name="participant">участвовать</string>
+    <string name="not_implemented">Не реализовано</string>
 </resources>

@@ -8,4 +8,5 @@
     <string name="share">share</string>
     <string name="like">like</string>
     <string name="participant">participate</string>
+    <string name="not_implemented">Not implemented</string>
 </resources>
