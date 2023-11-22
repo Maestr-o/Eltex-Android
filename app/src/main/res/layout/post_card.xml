@@ -25,6 +25,7 @@
             app:srcCompat="@drawable/avatar_background" />
 
         <TextView
+            android:id="@+id/initial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:letterSpacing="0.01"
@@ -38,13 +39,12 @@
 
         <TextView
             android:id="@+id/author"
+            style="@style/author_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
             android:ellipsize="end"
-            android:letterSpacing="0.01"
             android:maxLines="1"
-            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@id/authorOffset"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -62,11 +62,10 @@
 
         <TextView
             android:id="@+id/published"
+            style="@style/common_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
-            android:letterSpacing="0.02"
-            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/avatar"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -94,12 +93,11 @@
 
         <TextView
             android:id="@+id/content"
+            style="@style/common_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_spacing"
             android:layout_marginEnd="@dimen/common_spacing"
-            android:letterSpacing="0.02"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/headerBarrier"
