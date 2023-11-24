@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/author"
-            style="@style/author_text"
+            style="@style/authorText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
@@ -62,7 +62,7 @@
 
         <TextView
             android:id="@+id/published"
-            style="@style/common_text"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
@@ -82,6 +82,7 @@
             android:padding="5dp"
             app:icon="@drawable/baseline_more_vert_24"
             app:iconSize="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/avatar" />
 
@@ -94,8 +95,8 @@
             app:constraint_referenced_ids="menu, avatar, published" />
 
         <TextView
-            android:id="@+id/status"
-            style="@style/status_text"
+            android:id="@+id/eventType"
+            style="@style/statusText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -106,31 +107,31 @@
             tools:text="@string/offline" />
 
         <TextView
-            android:id="@+id/event_time"
-            style="@style/common_text"
+            android:id="@+id/eventTime"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/common_spacing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/status"
+            app:layout_constraintTop_toBottomOf="@id/eventType"
             tools:text="16.05.22 12:00" />
 
         <TextView
             android:id="@+id/content"
-            style="@style/common_text"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/big_spacing"
             android:layout_marginEnd="@dimen/common_spacing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/event_time"
+            app:layout_constraintTop_toBottomOf="@id/eventTime"
             tools:text="Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании." />
 
         <TextView
             android:id="@+id/link"
-            style="@style/common_text"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/big_spacing"
@@ -173,6 +174,7 @@
             app:layout_constraintTop_toBottomOf="@+id/link" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/participate"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

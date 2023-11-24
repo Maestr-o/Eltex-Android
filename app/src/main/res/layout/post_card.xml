@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/author"
-            style="@style/author_text"
+            style="@style/authorText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
@@ -62,7 +62,7 @@
 
         <TextView
             android:id="@+id/published"
-            style="@style/common_text"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
@@ -82,6 +82,7 @@
             android:padding="5dp"
             app:icon="@drawable/baseline_more_vert_24"
             app:iconSize="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/avatar" />
 
@@ -95,7 +96,7 @@
 
         <TextView
             android:id="@+id/content"
-            style="@style/common_text"
+            style="@style/commonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_spacing"

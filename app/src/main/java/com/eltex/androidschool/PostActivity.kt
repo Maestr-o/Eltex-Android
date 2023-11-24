@@ -15,7 +15,7 @@ import com.eltex.androidschool.viewmodel.PostViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class MainActivity : AppCompatActivity() {
+class PostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,21 +48,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindPost(binding: PostCardBinding, post: Post) {
         binding.content.text = post.content
-        binding.like.setIconResource(
-            if (post.likedByMe) {
-                R.drawable.baseline_favorite_24
-            } else {
-                R.drawable.baseline_favorite_border_24
-            }
-        )
         binding.author.text = post.author
         binding.published.text = post.published
         binding.authorInitials.text = post.author.take(1)
         binding.like.text = if (post.likedByMe) {
+            binding.like.setIconResource(R.drawable.baseline_favorite_24)
             1
         } else {
+            binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
             0
-        }
-            .toString()
+        }.toString()
     }
 }
