@@ -1,10 +1,19 @@
 package com.eltex.androidschool
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.databinding.PostCardBinding
 import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.repository.InMemoryPostRepository
 import com.eltex.androidschool.utils.toast
+import com.eltex.androidschool.viewmodel.PostViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,24 +22,19 @@ class MainActivity : AppCompatActivity() {
         val binding = PostCardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var post = Post(
-            id = 1L,
-            content = "Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
-            author = "Lydia Westervelt",
-            published = "11.05.22 11:21",
-            likedById = false,
-        )
+        val viewModel by viewModels<PostViewModel> {
+            viewModelFactory {
+                initializer { PostViewModel(InMemoryPostRepository()) }
+            }
+        }
 
-        binding.author.text = post.author
-        binding.content.text = post.content
-        binding.published.text = post.published
-        binding.initial.text = post.author.take(1)
-
-        bindPost(binding, post)
+        viewModel.uiState
+            .flowWithLifecycle(lifecycle)
+            .onEach { bindPost(binding, it.post) }
+            .launchIn(lifecycleScope)
 
         binding.like.setOnClickListener {
-            post = post.copy(likedById = !post.likedById)
-            bindPost(binding, post)
+            viewModel.like()
         }
 
         binding.share.setOnClickListener {
@@ -40,16 +44,25 @@ class MainActivity : AppCompatActivity() {
         binding.menu.setOnClickListener {
             this.toast(R.string.not_implemented, true)
         }
-
     }
 
     private fun bindPost(binding: PostCardBinding, post: Post) {
-        binding.like.text = if (post.likedById) {
-            binding.like.setIconResource(R.drawable.baseline_favorite_24)
+        binding.content.text = post.content
+        binding.like.setIconResource(
+            if (post.likedByMe) {
+                R.drawable.baseline_favorite_24
+            } else {
+                R.drawable.baseline_favorite_border_24
+            }
+        )
+        binding.author.text = post.author
+        binding.published.text = post.published
+        binding.authorInitials.text = post.author.take(1)
+        binding.like.text = if (post.likedByMe) {
             1
         } else {
-            binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
             0
-        }.toString()
+        }
+            .toString()
     }
 }
