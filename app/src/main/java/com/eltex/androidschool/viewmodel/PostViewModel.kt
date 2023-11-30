@@ -15,16 +15,16 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
     val uiState: StateFlow<PostUiState> = _uiState.asStateFlow()
 
     init {
-        repository.getPost()
-            .onEach { post ->
+        repository.getPosts()
+            .onEach { posts ->
                 _uiState.update {
-                    it.copy(post = post)
+                    it.copy(posts = posts)
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    fun like() {
-        repository.like()
+    fun likeById(id: Long) {
+        repository.likeById(id)
     }
 }

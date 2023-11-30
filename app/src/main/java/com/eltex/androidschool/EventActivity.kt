@@ -7,7 +7,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.eltex.androidschool.databinding.EventCardBinding
+import com.eltex.androidschool.databinding.CardEventBinding
 import com.eltex.androidschool.model.Event
 import com.eltex.androidschool.repository.InMemoryEventRepository
 import com.eltex.androidschool.utils.toast
@@ -19,7 +19,7 @@ class EventActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = EventCardBinding.inflate(layoutInflater)
+        val binding = CardEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val viewModel by viewModels<EventViewModel> {
@@ -50,7 +50,7 @@ class EventActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindEvent(binding: EventCardBinding, event: Event) {
+    private fun bindEvent(binding: CardEventBinding, event: Event) {
         binding.content.text = event.content
         binding.author.text = event.author
         binding.published.text = event.published
