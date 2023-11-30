@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.update
 
 class InMemoryPostRepository : PostRepository {
     private val state = MutableStateFlow(
-        List(100) {
+        List(20) {
             Post(
                 id = (it + 1).toLong(),
                 content = "$it. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",

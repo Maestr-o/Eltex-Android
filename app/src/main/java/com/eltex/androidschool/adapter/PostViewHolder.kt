@@ -9,12 +9,22 @@ class PostViewHolder(
     private val binding: CardPostBinding,
 ) : ViewHolder(binding.root) {
 
+    fun bindPost(payload: PostPayload) {
+        if (payload.liked != null) {
+            updateLike(payload.liked)
+        }
+    }
+
     fun bindPost(post: Post) {
         binding.content.text = post.content
         binding.author.text = post.author
         binding.published.text = post.published
         binding.authorInitials.text = post.author.take(1)
-        binding.like.text = if (post.likedByMe) {
+        updateLike(post.likedByMe)
+    }
+
+    private fun updateLike(likedByMe: Boolean) {
+        binding.like.text = if (likedByMe) {
             binding.like.setIconResource(R.drawable.baseline_favorite_24)
             1
         } else {
