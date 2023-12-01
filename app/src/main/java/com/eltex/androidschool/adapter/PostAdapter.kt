@@ -8,7 +8,7 @@ import com.eltex.androidschool.databinding.CardPostBinding
 import com.eltex.androidschool.model.Post
 import com.eltex.androidschool.utils.toast
 
-class PostsAdapter(private val likeClickListener: (Post) -> Unit) :
+class PostAdapter(private val likeClickListener: (Post) -> Unit) :
     ListAdapter<Post, PostViewHolder>(PostItemCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -20,11 +20,11 @@ class PostsAdapter(private val likeClickListener: (Post) -> Unit) :
         }
 
         postBinding.share.setOnClickListener {
-            postBinding.root.context.toast(R.string.not_implemented)
+            postBinding.root.context.toast(R.string.not_implemented, true)
         }
 
         postBinding.menu.setOnClickListener {
-            postBinding.root.context.toast(R.string.not_implemented)
+            postBinding.root.context.toast(R.string.not_implemented, true)
         }
 
         return viewHolder

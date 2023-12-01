@@ -8,11 +8,11 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.adapter.EventAdapter
 import com.eltex.androidschool.adapter.OffsetDecoration
-import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.databinding.ActivityMainBinding
-import com.eltex.androidschool.repository.InMemoryPostRepository
-import com.eltex.androidschool.viewmodel.PostViewModel
+import com.eltex.androidschool.repository.InMemoryEventRepository
+import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -20,18 +20,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel by viewModels<PostViewModel> {
+        val viewModel by viewModels<EventViewModel> {
             viewModelFactory {
-                initializer { PostViewModel(InMemoryPostRepository()) }
+                initializer { EventViewModel(InMemoryEventRepository()) }
             }
         }
 
         val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        val adapter = PostsAdapter {
-            viewModel.likeById(it.id)
-        }
+        val adapter = EventAdapter(
+            likeClickListener = { viewModel.likeById(it.id) },
+            participateClickListener = { viewModel.participateById(it.id) },
+        )
 
         binding.root.adapter = adapter
         binding.root.addItemDecoration(
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.uiState
             .flowWithLifecycle(lifecycle)
             .onEach {
-                adapter.submitList(it.posts)
+                adapter.submitList(it.events)
             }
             .launchIn(lifecycleScope)
     }

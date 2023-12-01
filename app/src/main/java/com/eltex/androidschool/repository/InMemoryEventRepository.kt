@@ -10,31 +10,44 @@ import kotlinx.coroutines.flow.update
 
 class InMemoryEventRepository : EventRepository {
     private val state = MutableStateFlow(
-        Event(
-            id = 1L,
-            authorId = 1L,
-            author = "Евгений Евгеньевич",
-            authorJob = "Eltex",
-            content = "Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
-            datetime = "10.12.2023 15:00",
-            published = "25.11.2023 00:29",
-            coords = Coordinates(lat = 55.05, long = 83.44),
-            type = EventType.OFFLINE,
-            link = "qwerty.com",
-        )
+        List(20) {
+            Event(
+                id = (it + 1).toLong(),
+                authorId = 1L,
+                author = "Евгений Евгеньевич",
+                authorJob = "Eltex",
+                content = "$it. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
+                datetime = "10.12.2023 15:00",
+                published = "25.11.2023 00:29",
+                coords = Coordinates(lat = 55.05, long = 83.44),
+                type = EventType.OFFLINE,
+                link = "qwerty.com",
+            )
+        }
+            .reversed()
     )
 
-    override fun getEvent(): Flow<Event> = state.asStateFlow()
+    override fun getEvents(): Flow<List<Event>> = state.asStateFlow()
 
-    override fun like() {
+    override fun likeById(id: Long) {
         state.update {
-            it.copy(likedByMe = !it.likedByMe)
+            it.map { event ->
+                if (event.id == id) {
+                    event.copy(likedByMe = !event.likedByMe)
+                } else
+                    event
+            }
         }
     }
 
-    override fun participate() {
+    override fun participateById(id: Long) {
         state.update {
-            it.copy(participatedByMe = !it.participatedByMe)
+            it.map { event ->
+                if (event.id == id) {
+                    event.copy(participatedByMe = !event.participatedByMe)
+                } else
+                    event
+            }
         }
     }
 }
