@@ -9,4 +9,10 @@
     <string name="like">лайк</string>
     <string name="participant">участвовать</string>
     <string name="not_implemented">Не реализовано</string>
+    <string name="share_text">Автор: %s, содержание: %s</string>
+    <string name="save_post">Сохранить пост</string>
+    <string name="new_post">Новый пост</string>
+    <string name="content">Содержание</string>
+    <string name="post_empty_error">Содержимое не должно быть пустым</string>
+    <string name="delete_post">Удалить пост</string>
 </resources>

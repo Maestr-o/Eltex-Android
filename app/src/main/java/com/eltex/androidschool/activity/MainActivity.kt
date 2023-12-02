@@ -1,4 +1,4 @@
-package com.eltex.androidschool
+package com.eltex.androidschool.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,8 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.eltex.androidschool.adapter.EventAdapter
+import com.eltex.androidschool.R
+import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.repository.InMemoryEventRepository
@@ -29,13 +30,13 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        val adapter = EventAdapter(
+        val adapter = EventsAdapter(
             likeClickListener = { viewModel.likeById(it.id) },
             participateClickListener = { viewModel.participateById(it.id) },
         )
 
-        binding.root.adapter = adapter
-        binding.root.addItemDecoration(
+        binding.list.adapter = adapter
+        binding.list.addItemDecoration(
             OffsetDecoration(resources.getDimensionPixelSize(R.dimen.small_spacing))
         )
 

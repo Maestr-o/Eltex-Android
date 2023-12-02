@@ -8,4 +8,10 @@
     <string name="like">like</string>
     <string name="participant">participate</string>
     <string name="not_implemented">Not implemented</string>
+    <string name="share_text">Author: %s, content: %s</string>
+    <string name="save_post">Save post</string>
+    <string name="new_post">New post</string>
+    <string name="content">Content</string>
+    <string name="post_empty_error">Content must not be blank</string>
+    <string name="delete_post">Delete post</string>
 </resources>

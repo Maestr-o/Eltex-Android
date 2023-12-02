@@ -20,6 +20,8 @@ class InMemoryPostRepository : PostRepository {
             .reversed()
     )
 
+    private var nextId = state.value.first().id
+
     override fun getPosts(): Flow<List<Post>> = state.asStateFlow()
 
     override fun likeById(id: Long) {
@@ -29,6 +31,30 @@ class InMemoryPostRepository : PostRepository {
                     post.copy(likedByMe = !post.likedByMe)
                 } else
                     post
+            }
+        }
+    }
+
+    override fun addPost(content: String) {
+        state.update { posts ->
+            buildList(posts.size + 1) {
+                add(
+                    Post(
+                        id = ++nextId,
+                        content = content,
+                        author = "Me",
+                        published = "02.12.23 21:05"
+                    )
+                )
+                addAll(posts)
+            }
+        }
+    }
+
+    override fun deleteById(id: Long) {
+        state.update { posts ->
+            posts.filter {
+                it.id != id
             }
         }
     }

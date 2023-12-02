@@ -8,7 +8,7 @@ import com.eltex.androidschool.databinding.CardEventBinding
 import com.eltex.androidschool.model.Event
 import com.eltex.androidschool.utils.toast
 
-class EventAdapter(
+class EventsAdapter(
     private val likeClickListener: (Event) -> Unit,
     private val participateClickListener: (Event) -> Unit,
 ) : ListAdapter<Event, EventViewHolder>(EventItemCallback()) {

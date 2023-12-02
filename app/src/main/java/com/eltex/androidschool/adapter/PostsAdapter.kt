@@ -2,29 +2,49 @@ package com.eltex.androidschool.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardPostBinding
 import com.eltex.androidschool.model.Post
-import com.eltex.androidschool.utils.toast
 
-class PostAdapter(private val likeClickListener: (Post) -> Unit) :
+class PostsAdapter(private val listener: PostListener) :
     ListAdapter<Post, PostViewHolder>(PostItemCallback()) {
+
+    interface PostListener {
+        fun onLikeClickListener(post: Post)
+        fun onShareClickListener(post: Post)
+        fun onDeleteClickListener(post: Post)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val postBinding = CardPostBinding.inflate(inflater, parent, false)
         val viewHolder = PostViewHolder(postBinding)
 
         postBinding.like.setOnClickListener {
-            likeClickListener(getItem(viewHolder.adapterPosition))
+            listener.onLikeClickListener(getItem(viewHolder.adapterPosition))
         }
 
         postBinding.share.setOnClickListener {
-            postBinding.root.context.toast(R.string.not_implemented, true)
+            listener.onShareClickListener(getItem(viewHolder.adapterPosition))
         }
 
         postBinding.menu.setOnClickListener {
-            postBinding.root.context.toast(R.string.not_implemented, true)
+            PopupMenu(it.context, it).apply {
+                inflate(R.menu.post_actions_menu)
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.delete -> {
+                            listener.onDeleteClickListener(getItem(viewHolder.adapterPosition))
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+                show()
+            }
         }
 
         return viewHolder
