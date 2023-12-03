@@ -58,9 +58,10 @@ class PostActivity : AppCompatActivity() {
             val text = intent.getStringExtra(Intent.EXTRA_TEXT)
             intent.removeExtra(Intent.EXTRA_TEXT)
             if (!text.isNullOrBlank()) {
-                val newPostIntent = Intent(this, NewPostActivity::class.java)
-                newPostIntent.putExtra(Intent.EXTRA_TEXT, text)
-                startActivity(newPostIntent)
+                newPostContract.launch(
+                    Intent(this, NewPostActivity::class.java)
+                        .putExtra(Intent.EXTRA_TEXT, text)
+                )
             }
         }
 
@@ -77,7 +78,7 @@ class PostActivity : AppCompatActivity() {
                             Intent.EXTRA_TEXT,
                             getString(R.string.share_text, post.author, post.content)
                         )
-                        .setType("plain/text")
+                        .setType("text/plain")
 
                     val chooser = Intent.createChooser(intentShare, null)
                     startActivity(chooser)
