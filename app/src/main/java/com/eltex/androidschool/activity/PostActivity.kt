@@ -41,8 +41,27 @@ class PostActivity : AppCompatActivity() {
                 }
             }
 
+        val editPostContract =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                val id = it.data?.getLongExtra("id", 0)
+                val content = it.data?.getStringExtra(Intent.EXTRA_TEXT)
+                if (content != null && id != null) {
+                    viewModel.editById(id, content)
+                }
+            }
+
         binding.newPost.setOnClickListener {
             newPostContract.launch(Intent(this, NewPostActivity::class.java))
+        }
+
+        if (intent.action == Intent.ACTION_SEND) {
+            val text = intent.getStringExtra(Intent.EXTRA_TEXT)
+            intent.removeExtra(Intent.EXTRA_TEXT)
+            if (!text.isNullOrBlank()) {
+                val newPostIntent = Intent(this, NewPostActivity::class.java)
+                newPostIntent.putExtra(Intent.EXTRA_TEXT, text)
+                startActivity(newPostIntent)
+            }
         }
 
         val adapter = PostsAdapter(
@@ -52,7 +71,7 @@ class PostActivity : AppCompatActivity() {
                 }
 
                 override fun onShareClickListener(post: Post) {
-                    val intent = Intent()
+                    val intentShare = Intent()
                         .setAction(Intent.ACTION_SEND)
                         .putExtra(
                             Intent.EXTRA_TEXT,
@@ -60,12 +79,20 @@ class PostActivity : AppCompatActivity() {
                         )
                         .setType("plain/text")
 
-                    val chooser = Intent.createChooser(intent, null)
+                    val chooser = Intent.createChooser(intentShare, null)
                     startActivity(chooser)
                 }
 
                 override fun onDeleteClickListener(post: Post) {
                     viewModel.deleteById(post.id)
+                }
+
+                override fun onEditClickListener(post: Post) {
+                    Intent(binding.root.context, EditPostActivity::class.java).apply {
+                        putExtra(Intent.EXTRA_TEXT, post.content)
+                        putExtra("id", post.id)
+                        editPostContract.launch(this)
+                    }
                 }
             }
         )

@@ -11,7 +11,7 @@ class InMemoryPostRepository : PostRepository {
         List(20) {
             Post(
                 id = (it + 1).toLong(),
-                content = "$it. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
+                content = "${it + 1}. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
                 author = "Lydia Westervelt",
                 published = "11.05.22 11:21",
                 likedByMe = false,
@@ -55,6 +55,17 @@ class InMemoryPostRepository : PostRepository {
         state.update { posts ->
             posts.filter {
                 it.id != id
+            }
+        }
+    }
+
+    override fun editById(id: Long, text: String) {
+        state.update { posts ->
+            posts.map { post ->
+                if (post.id == id) {
+                    post.copy(content = text)
+                } else
+                    post
             }
         }
     }

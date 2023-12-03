@@ -35,4 +35,8 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
     fun deleteById(id: Long) {
         repository.deleteById(id)
     }
+
+    fun editById(id: Long, text: String) {
+        repository.editById(id, text)
+    }
 }

@@ -14,9 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/new_post_menu"
+        app:menu="@menu/edit_post_menu"
         app:navigationIcon="?homeAsUpIndicator"
-        app:title="@string/new_post" />
+        tools:title="Edit post #41" />
 
     <EditText
         android:id="@+id/content"

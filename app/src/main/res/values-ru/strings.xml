@@ -15,4 +15,6 @@
     <string name="content">Содержание</string>
     <string name="post_empty_error">Содержимое не должно быть пустым</string>
     <string name="delete_post">Удалить пост</string>
+    <string name="edit_post_number">Редактировать пост #%d</string>
+    <string name="edit_post">Редактировать пост</string>
 </resources>

@@ -14,4 +14,6 @@
     <string name="content">Content</string>
     <string name="post_empty_error">Content must not be blank</string>
     <string name="delete_post">Delete post</string>
+    <string name="edit_post_number">Edit post #%d</string>
+    <string name="edit_post">Edit post</string>
 </resources>

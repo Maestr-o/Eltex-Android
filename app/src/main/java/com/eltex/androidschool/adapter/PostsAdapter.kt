@@ -15,6 +15,7 @@ class PostsAdapter(private val listener: PostListener) :
         fun onLikeClickListener(post: Post)
         fun onShareClickListener(post: Post)
         fun onDeleteClickListener(post: Post)
+        fun onEditClickListener(post: Post)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -37,6 +38,11 @@ class PostsAdapter(private val listener: PostListener) :
                     when (item.itemId) {
                         R.id.delete -> {
                             listener.onDeleteClickListener(getItem(viewHolder.adapterPosition))
+                            true
+                        }
+
+                        R.id.edit -> {
+                            listener.onEditClickListener(getItem(viewHolder.adapterPosition))
                             true
                         }
 
