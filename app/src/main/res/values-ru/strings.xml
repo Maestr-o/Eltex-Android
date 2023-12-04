@@ -10,11 +10,16 @@
     <string name="participant">участвовать</string>
     <string name="not_implemented">Не реализовано</string>
     <string name="share_text">Автор: %s, содержание: %s</string>
-    <string name="save_post">Сохранить пост</string>
+    <string name="save_note">Сохранить</string>
+    <string name="new_note">Новая запись</string>
+    <string name="content_hint">Что вы хотите написать?</string>
+    <string name="empty_error">Содержимое не должно быть пустым</string>
+    <string name="delete_note">Удалить запись</string>
+    <string name="edit_event_number">Обновить событие #%d</string>
+    <string name="edit_post">Обновить пост</string>
+    <string name="edit_event">Обновить событие</string>
+    <string name="edit_post_number">Обновить пост #%d</string>
+    <string name="edit_note">Обновить запись</string>
     <string name="new_post">Новый пост</string>
-    <string name="content">Содержание</string>
-    <string name="post_empty_error">Содержимое не должно быть пустым</string>
-    <string name="delete_post">Удалить пост</string>
-    <string name="edit_post_number">Редактировать пост #%d</string>
-    <string name="edit_post">Редактировать пост</string>
+    <string name="new_event">Новое событие</string>
 </resources>

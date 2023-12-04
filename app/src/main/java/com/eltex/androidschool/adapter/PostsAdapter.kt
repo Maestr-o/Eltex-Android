@@ -33,7 +33,7 @@ class PostsAdapter(private val listener: PostListener) :
 
         postBinding.menu.setOnClickListener {
             PopupMenu(it.context, it).apply {
-                inflate(R.menu.post_actions_menu)
+                inflate(R.menu.note_actions_menu)
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.delete -> {

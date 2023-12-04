@@ -13,7 +13,7 @@ class InMemoryPostRepository : PostRepository {
                 id = (it + 1).toLong(),
                 content = "${it + 1}. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
                 author = "Lydia Westervelt",
-                published = "11.05.22 11:21",
+                published = "11.05.2022 11:21",
                 likedByMe = false,
             )
         }
@@ -43,7 +43,7 @@ class InMemoryPostRepository : PostRepository {
                         id = ++nextId,
                         content = content,
                         author = "Me",
-                        published = "02.12.23 21:05"
+                        published = "02.12.2023 21:05"
                     )
                 )
                 addAll(posts)

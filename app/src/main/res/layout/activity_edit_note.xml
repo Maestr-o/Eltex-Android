@@ -14,9 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/edit_post_menu"
+        app:menu="@menu/edit_note_menu"
         app:navigationIcon="?homeAsUpIndicator"
-        tools:title="Edit post #41" />
+        tools:title="Edit note #41" />
 
     <EditText
         android:id="@+id/content"
@@ -24,7 +24,7 @@
         android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:hint="@string/content"
+        android:hint="@string/content_hint"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:padding="@dimen/common_spacing"

@@ -4,13 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.eltex.androidschool.R
-import com.eltex.androidschool.databinding.ActivityEditPostBinding
+import com.eltex.androidschool.databinding.ActivityEditNoteBinding
 import com.eltex.androidschool.utils.toast
 
 class EditPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityEditPostBinding.inflate(layoutInflater)
+        val binding = ActivityEditNoteBinding.inflate(layoutInflater)
         binding.toolbar.title = getString(R.string.edit_post_number, intent.getLongExtra("id", 0))
         setContentView(binding.root)
 
@@ -33,7 +33,7 @@ class EditPostActivity : AppCompatActivity() {
                         )
                         finish()
                     } else {
-                        binding.root.context.toast(R.string.post_empty_error, true)
+                        binding.root.context.toast(R.string.empty_error, true)
                     }
                     true
                 }

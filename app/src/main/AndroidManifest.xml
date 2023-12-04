@@ -19,12 +19,27 @@
             android:name=".activity.EditPostActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PostActivity"
+            android:name=".activity.NewEventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.EditEventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.EventActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <data android:mimeType="text/plain" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.PostActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <data android:mimeType="text/plain" />

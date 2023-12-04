@@ -12,7 +12,7 @@
         android:paddingTop="12dp"
         android:paddingEnd="0dp"
         android:paddingBottom="@dimen/common_spacing"
-        tools:context=".activity.MainActivity">
+        tools:context=".activity.EventActivity">
 
         <ImageView
             android:id="@+id/avatar"

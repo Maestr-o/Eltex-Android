@@ -9,11 +9,16 @@
     <string name="participant">participate</string>
     <string name="not_implemented">Not implemented</string>
     <string name="share_text">Author: %s, content: %s</string>
-    <string name="save_post">Save post</string>
-    <string name="new_post">New post</string>
-    <string name="content">Content</string>
-    <string name="post_empty_error">Content must not be blank</string>
-    <string name="delete_post">Delete post</string>
-    <string name="edit_post_number">Edit post #%d</string>
+    <string name="save_note">Save note</string>
+    <string name="new_note">New note</string>
+    <string name="content_hint">What do you want to write?</string>
+    <string name="empty_error">Content must not be blank</string>
+    <string name="delete_note">Delete note</string>
+    <string name="edit_event_number">Edit event #%d</string>
     <string name="edit_post">Edit post</string>
+    <string name="edit_event">Edit event</string>
+    <string name="edit_post_number">Edit post #%d</string>
+    <string name="edit_note">Edit note</string>
+    <string name="new_post">New post</string>
+    <string name="new_event">New event</string>
 </resources>

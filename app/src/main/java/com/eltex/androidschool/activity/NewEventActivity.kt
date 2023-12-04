@@ -7,11 +7,11 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.ActivityEditNoteBinding
 import com.eltex.androidschool.utils.toast
 
-class NewPostActivity : AppCompatActivity() {
+class NewEventActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityEditNoteBinding.inflate(layoutInflater)
-        binding.toolbar.title = getString(R.string.new_post)
+        binding.toolbar.title = getString(R.string.new_event)
         setContentView(binding.root)
 
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
