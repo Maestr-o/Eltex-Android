@@ -1,33 +1,47 @@
 package com.eltex.androidschool.repository
 
-import com.eltex.androidschool.model.Coordinates
+import android.content.Context
+import androidx.core.content.edit
 import com.eltex.androidschool.model.Event
-import com.eltex.androidschool.model.EventType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-class InMemoryEventRepository : EventRepository {
-    private val state = MutableStateFlow(
-        List(20) {
-            Event(
-                id = (it + 1).toLong(),
-                authorId = 1L,
-                author = "Евгений Евгеньевич",
-                authorJob = "Eltex",
-                content = "${it + 1}. Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании.",
-                datetime = "10.12.2023 15:00",
-                published = "25.11.2023 00:29",
-                coords = Coordinates(lat = 55.05, long = 83.44),
-                type = EventType.OFFLINE,
-                link = "qwerty.com",
-            )
+class LocalEventsRepository(
+    private val context: Context
+) : EventRepository {
+
+    companion object {
+        const val EVENTS_FILENAME = "EVENTS_FILENAME"
+        const val ID_FILENAME = "ID_FILENAME"
+    }
+
+    private val preferences = context.getSharedPreferences(ID_FILENAME, Context.MODE_PRIVATE)
+    private val state = MutableStateFlow(readEvents())
+    private var nextId = readId()
+
+    private fun readEvents(): List<Event> {
+        val file = context.filesDir.resolve(EVENTS_FILENAME)
+        val serializedEvents = if (file.exists()) {
+            file.bufferedReader()
+                .use {
+                    it.readLine()
+                }
+        } else {
+            null
         }
-            .reversed()
-    )
 
-    private var nextId = state.value.first().id
+        return if (serializedEvents != null) {
+            Json.decodeFromString(serializedEvents)
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun readId(): Long = preferences.getLong(ID_FILENAME, 0L)
 
     override fun getEvents(): Flow<List<Event>> = state.asStateFlow()
 
@@ -40,6 +54,7 @@ class InMemoryEventRepository : EventRepository {
                     event
             }
         }
+        sync()
     }
 
     override fun participateById(id: Long) {
@@ -51,6 +66,7 @@ class InMemoryEventRepository : EventRepository {
                     event
             }
         }
+        sync()
     }
 
     override fun addEvent(content: String) {
@@ -69,6 +85,7 @@ class InMemoryEventRepository : EventRepository {
                 addAll(events)
             }
         }
+        sync()
     }
 
     override fun deleteById(id: Long) {
@@ -77,6 +94,7 @@ class InMemoryEventRepository : EventRepository {
                 it.id != id
             }
         }
+        sync()
     }
 
     override fun editById(id: Long, content: String) {
@@ -88,5 +106,17 @@ class InMemoryEventRepository : EventRepository {
                     it
             }
         }
+        sync()
+    }
+
+    private fun sync() {
+        preferences.edit {
+            putLong(ID_FILENAME, nextId)
+        }
+        context.filesDir.resolve(EVENTS_FILENAME)
+            .bufferedWriter()
+            .use {
+                it.write(Json.encodeToString(state.value))
+            }
     }
 }

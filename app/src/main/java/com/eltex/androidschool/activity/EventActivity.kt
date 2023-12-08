@@ -11,23 +11,27 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
-import com.eltex.androidschool.activity.PostActivity.Companion.EXTRA_EDITED_EVENT_ID
 import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.model.Event
-import com.eltex.androidschool.repository.InMemoryEventRepository
+import com.eltex.androidschool.repository.LocalEventsRepository
 import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_EDITED_EVENT_ID = "EXTRA_EDITED_EVENT_ID"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val viewModel by viewModels<EventViewModel> {
             viewModelFactory {
-                initializer { EventViewModel(InMemoryEventRepository()) }
+                initializer { EventViewModel(LocalEventsRepository(applicationContext)) }
             }
         }
 

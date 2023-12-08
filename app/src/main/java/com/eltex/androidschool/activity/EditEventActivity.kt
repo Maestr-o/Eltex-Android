@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.eltex.androidschool.R
-import com.eltex.androidschool.activity.PostActivity.Companion.EXTRA_EDITED_EVENT_ID
+import com.eltex.androidschool.activity.EventActivity.Companion.EXTRA_EDITED_EVENT_ID
 import com.eltex.androidschool.databinding.ActivityEditNoteBinding
 import com.eltex.androidschool.utils.toast
 

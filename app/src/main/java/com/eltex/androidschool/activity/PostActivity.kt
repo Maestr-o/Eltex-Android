@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.onEach
 class PostActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_EDITED_EVENT_ID = "com.eltex.androidschool.activity.EXTRA_EDITED_EVENT_ID"
+        const val EXTRA_EDITED_POST_ID = "EXTRA_EDITED_POST_ID"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +48,7 @@ class PostActivity : AppCompatActivity() {
 
         val editPostContract =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                val id = it.data?.getLongExtra(EXTRA_EDITED_EVENT_ID, 0)
+                val id = it.data?.getLongExtra(EXTRA_EDITED_POST_ID, 0)
                 val content = it.data?.getStringExtra(Intent.EXTRA_TEXT)
                 if (content != null && id != null) {
                     viewModel.editById(id, content)
@@ -96,7 +96,7 @@ class PostActivity : AppCompatActivity() {
                 override fun onEditClickListener(post: Post) {
                     Intent(binding.root.context, EditPostActivity::class.java).apply {
                         putExtra(Intent.EXTRA_TEXT, post.content)
-                        putExtra(EXTRA_EDITED_EVENT_ID, post.id)
+                        putExtra(EXTRA_EDITED_POST_ID, post.id)
                         editPostContract.launch(this)
                     }
                 }
