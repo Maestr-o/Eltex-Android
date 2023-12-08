@@ -15,18 +15,23 @@ import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.model.Post
-import com.eltex.androidschool.repository.InMemoryPostRepository
+import com.eltex.androidschool.repository.FilePostRepository
 import com.eltex.androidschool.viewmodel.PostViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class PostActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_EDITED_EVENT_ID = "com.eltex.androidschool.activity.EXTRA_EDITED_EVENT_ID"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
-                initializer { PostViewModel(InMemoryPostRepository()) }
+                initializer { PostViewModel(FilePostRepository(applicationContext)) }
             }
         }
 
@@ -43,7 +48,7 @@ class PostActivity : AppCompatActivity() {
 
         val editPostContract =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                val id = it.data?.getLongExtra("id", 0)
+                val id = it.data?.getLongExtra(EXTRA_EDITED_EVENT_ID, 0)
                 val content = it.data?.getStringExtra(Intent.EXTRA_TEXT)
                 if (content != null && id != null) {
                     viewModel.editById(id, content)
@@ -91,7 +96,7 @@ class PostActivity : AppCompatActivity() {
                 override fun onEditClickListener(post: Post) {
                     Intent(binding.root.context, EditPostActivity::class.java).apply {
                         putExtra(Intent.EXTRA_TEXT, post.content)
-                        putExtra("id", post.id)
+                        putExtra(EXTRA_EDITED_EVENT_ID, post.id)
                         editPostContract.launch(this)
                     }
                 }

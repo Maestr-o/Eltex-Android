@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.eltex.androidschool.R
+import com.eltex.androidschool.activity.PostActivity.Companion.EXTRA_EDITED_EVENT_ID
 import com.eltex.androidschool.databinding.ActivityEditNoteBinding
 import com.eltex.androidschool.utils.toast
 
@@ -11,7 +12,8 @@ class EditEventActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityEditNoteBinding.inflate(layoutInflater)
-        binding.toolbar.title = getString(R.string.edit_event_number, intent.getLongExtra("id", 0))
+        binding.toolbar.title =
+            getString(R.string.edit_event_number, intent.getLongExtra(EXTRA_EDITED_EVENT_ID, 0))
         setContentView(binding.root)
 
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
@@ -29,7 +31,10 @@ class EditEventActivity : AppCompatActivity() {
                         setResult(
                             RESULT_OK, Intent()
                                 .putExtra(Intent.EXTRA_TEXT, content)
-                                .putExtra("id", intent.getLongExtra("id", 0))
+                                .putExtra(
+                                    EXTRA_EDITED_EVENT_ID,
+                                    intent.getLongExtra(EXTRA_EDITED_EVENT_ID, 0)
+                                )
                         )
                         finish()
                     } else {

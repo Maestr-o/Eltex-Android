@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
+import com.eltex.androidschool.activity.PostActivity.Companion.EXTRA_EDITED_EVENT_ID
 import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.databinding.ActivityMainBinding
@@ -44,7 +45,7 @@ class EventActivity : AppCompatActivity() {
         val editEventContract =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val content = it.data?.getStringExtra(Intent.EXTRA_TEXT)
-                val id = it.data?.getLongExtra("id", 0)
+                val id = it.data?.getLongExtra(EXTRA_EDITED_EVENT_ID, 0)
                 if (content != null && id != null) {
                     viewModel.editEvent(content, id)
                 }
@@ -94,7 +95,7 @@ class EventActivity : AppCompatActivity() {
                 override fun onEditClickListener(event: Event) {
                     Intent(binding.root.context, EditEventActivity::class.java).apply {
                         putExtra(Intent.EXTRA_TEXT, event.content)
-                        putExtra("id", event.id)
+                        putExtra(EXTRA_EDITED_EVENT_ID, event.id)
                         editEventContract.launch(this)
                     }
                 }
