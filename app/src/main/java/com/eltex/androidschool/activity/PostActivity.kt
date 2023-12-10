@@ -14,8 +14,9 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.databinding.ActivityMainBinding
+import com.eltex.androidschool.db.AppDb
 import com.eltex.androidschool.model.Post
-import com.eltex.androidschool.repository.FilePostRepository
+import com.eltex.androidschool.repository.SQLitePostRepository
 import com.eltex.androidschool.viewmodel.PostViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,7 +32,11 @@ class PostActivity : AppCompatActivity() {
 
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
-                initializer { PostViewModel(FilePostRepository(applicationContext)) }
+                initializer {
+                    PostViewModel(
+                        SQLitePostRepository(AppDb.getInstance(applicationContext).postsDao)
+                    )
+                }
             }
         }
 
