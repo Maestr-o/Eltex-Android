@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.core.content.contentValuesOf
 import com.eltex.androidschool.db.PostTable
 import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.utils.getBooleanOrThrow
+import com.eltex.androidschool.utils.getLongOrThrow
+import com.eltex.androidschool.utils.getStringOrThrow
 
 class PostsDaoImpl(private val db: SQLiteDatabase) : PostsDao {
     override fun getAll(): List<Post> =
@@ -40,7 +43,7 @@ class PostsDaoImpl(private val db: SQLiteDatabase) : PostsDao {
         return getPostById(id)
     }
 
-    private fun getPostById(id: Long): Post =
+    override fun getPostById(id: Long): Post =
         db.query(
             PostTable.TABLE_NAME,
             PostTable.allColumns,
@@ -72,10 +75,10 @@ class PostsDaoImpl(private val db: SQLiteDatabase) : PostsDao {
 
     private fun Cursor.getPost(): Post =
         Post(
-            id = getLong(getColumnIndexOrThrow(PostTable.ID)),
-            author = getString(getColumnIndexOrThrow(PostTable.AUTHOR)),
-            content = getString(getColumnIndexOrThrow(PostTable.CONTENT)),
-            published = getString(getColumnIndexOrThrow(PostTable.PUBLISHED)),
-            likedByMe = getInt(getColumnIndexOrThrow(PostTable.LIKED_BY_ME)) == 1,
+            id = getLongOrThrow(PostTable.ID),
+            author = getStringOrThrow(PostTable.AUTHOR),
+            content = getStringOrThrow(PostTable.CONTENT),
+            published = getStringOrThrow(PostTable.PUBLISHED),
+            likedByMe = getBooleanOrThrow(PostTable.LIKED_BY_ME),
         )
 }

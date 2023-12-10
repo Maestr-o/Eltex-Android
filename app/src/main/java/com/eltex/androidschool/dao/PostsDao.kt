@@ -4,6 +4,7 @@ import com.eltex.androidschool.model.Post
 
 interface PostsDao {
     fun getAll(): List<Post>
+    fun getPostById(id: Long): Post
     fun save(post: Post): Post
     fun deleteById(id: Long)
     fun likeById(id: Long): Post

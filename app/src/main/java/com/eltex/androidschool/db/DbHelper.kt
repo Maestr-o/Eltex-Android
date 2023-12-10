@@ -17,6 +17,19 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, "app_db", null, 1) 
             );
         """.trimIndent()
         )
+        db.execSQL(
+            """
+            CREATE TABLE ${EventTable.TABLE_NAME} (
+            	${EventTable.ID}	INTEGER PRIMARY KEY AUTOINCREMENT,
+            	${EventTable.CONTENT}	TEXT NOT NULL,
+                ${EventTable.DATETIME}	TEXT NOT NULL,
+            	${EventTable.PUBLISHED}	TEXT NOT NULL,
+            	${EventTable.AUTHOR}	TEXT NOT NULL,
+            	${EventTable.LIKED_BY_ME}	INTEGER NOT NULL DEFAULT 0,
+                ${EventTable.PARTICIPATED_BY_ME} INTEGER NOT NULL DEFAULT 0
+            );
+        """.trimIndent()
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

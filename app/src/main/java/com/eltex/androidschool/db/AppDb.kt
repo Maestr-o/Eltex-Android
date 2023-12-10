@@ -2,11 +2,13 @@ package com.eltex.androidschool.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.eltex.androidschool.dao.EventsDaoImpl
 import com.eltex.androidschool.dao.PostsDaoImpl
 
 class AppDb private constructor(db: SQLiteDatabase) {
 
     val postsDao = PostsDaoImpl(db)
+    val eventsDao = EventsDaoImpl(db)
 
     companion object {
         @Volatile

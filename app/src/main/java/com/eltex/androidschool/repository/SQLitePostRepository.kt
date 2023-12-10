@@ -40,7 +40,7 @@ class SQLitePostRepository(
 
     override fun editById(id: Long, text: String) {
         dao.save(
-            Post(
+            dao.getPostById(id).copy(
                 id = id,
                 content = text,
             )
