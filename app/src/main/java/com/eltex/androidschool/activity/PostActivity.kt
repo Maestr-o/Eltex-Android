@@ -34,7 +34,7 @@ class PostActivity : AppCompatActivity() {
             viewModelFactory {
                 initializer {
                     PostViewModel(
-                        SQLitePostRepository(AppDb.getInstance(applicationContext).postsDao)
+                        SQLitePostRepository(AppDb.getInstance(applicationContext).postDao)
                     )
                 }
             }

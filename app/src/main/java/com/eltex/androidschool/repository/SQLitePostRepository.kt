@@ -1,50 +1,45 @@
 package com.eltex.androidschool.repository
 
-import com.eltex.androidschool.dao.PostsDao
+import com.eltex.androidschool.dao.PostDao
+import com.eltex.androidschool.entity.PostEntity
 import com.eltex.androidschool.model.Post
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
 
-class SQLitePostRepository(
-    private val dao: PostsDao
-) : PostRepository {
-
-    private val state = MutableStateFlow(readPosts())
-
-    private fun readPosts(): List<Post> = dao.getAll()
-
-    override fun getPosts(): Flow<List<Post>> = state.asStateFlow()
+class SQLitePostRepository(private val dao: PostDao) : PostRepository {
+    override fun getPosts(): Flow<List<Post>> = dao.getAll()
+        .map {
+            it.map(PostEntity::toPost)
+        }
 
     override fun likeById(id: Long) {
         dao.likeById(id)
-        state.update { readPosts() }
     }
 
     override fun addPost(content: String) {
         dao.save(
-            Post(
-                content = content,
-                author = "Me",
-                published = "09.12.2023 21:14",
+            PostEntity.fromPost(
+                Post(
+                    content = content,
+                    author = "Me",
+                    published = "13.12.2023 20:50",
+                )
             )
         )
-        state.update { readPosts() }
     }
 
     override fun deleteById(id: Long) {
         dao.deleteById(id)
-        state.update { readPosts() }
     }
 
     override fun editById(id: Long, text: String) {
         dao.save(
-            dao.getPostById(id).copy(
-                id = id,
-                content = text,
+            PostEntity.fromPost(
+                dao.getPostById(id).toPost().copy(
+                    id = id,
+                    content = text,
+                )
             )
         )
-        state.update { readPosts() }
     }
 }
