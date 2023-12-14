@@ -1,18 +1,22 @@
 package com.eltex.androidschool.db
+
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.eltex.androidschool.dao.PostDao
+import com.eltex.androidschool.dao.EventsDao
+import com.eltex.androidschool.dao.PostsDao
+import com.eltex.androidschool.entity.EventEntity
 import com.eltex.androidschool.entity.PostEntity
 
 @Database(
-    entities = [PostEntity::class],
+    entities = [PostEntity::class, EventEntity::class],
     version = 1,
 )
 abstract class AppDb : RoomDatabase() {
 
-    abstract val postDao: PostDao
+    abstract val postDao: PostsDao
+    abstract val eventsDao: EventsDao
 
     companion object {
         @Volatile

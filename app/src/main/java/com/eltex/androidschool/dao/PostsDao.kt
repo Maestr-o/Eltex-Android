@@ -7,7 +7,7 @@ import com.eltex.androidschool.entity.PostEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface PostDao {
+interface PostsDao {
     @Query("SELECT * FROM Posts ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
@@ -21,7 +21,6 @@ interface PostDao {
             WHERE id = :id;
         """
     )
-
     fun likeById(id: Long)
 
     @Query("DELETE FROM Posts WHERE id = :id")
