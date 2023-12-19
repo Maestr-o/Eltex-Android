@@ -22,4 +22,7 @@
     <string name="edit_note">Обновить запись</string>
     <string name="new_post">Новый пост</string>
     <string name="new_event">Новое событие</string>
+    <string name="posts_description">Посты</string>
+    <string name="events_description">События</string>
+    <string name="users_description">Люди</string>
 </resources>

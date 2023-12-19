@@ -16,10 +16,11 @@ class SQLitePostRepository(private val dao: PostsDao) : PostRepository {
         dao.likeById(id)
     }
 
-    override fun addPost(content: String) {
+    override fun savePost(id: Long, content: String) {
         dao.save(
             PostEntity.fromPost(
                 Post(
+                    id = id,
                     content = content,
                     author = "Me",
                     published = "13.12.2023 20:50",

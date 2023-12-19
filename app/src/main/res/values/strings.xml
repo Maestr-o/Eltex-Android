@@ -21,4 +21,10 @@
     <string name="edit_note">Edit note</string>
     <string name="new_post">New post</string>
     <string name="new_event">New event</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="posts_description">Posts</string>
+    <string name="events_description">Events</string>
+    <string name="users_description">Users</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
