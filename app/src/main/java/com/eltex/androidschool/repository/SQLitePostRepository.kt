@@ -17,28 +17,25 @@ class SQLitePostRepository(private val dao: PostsDao) : PostRepository {
     }
 
     override fun savePost(id: Long, content: String) {
-        dao.save(
-            PostEntity.fromPost(
-                Post(
-                    id = id,
-                    content = content,
-                    author = "Me",
-                    published = "13.12.2023 20:50",
+        val idx = dao.getPostById(id)
+        if (idx == null) {
+            dao.save(
+                PostEntity.fromPost(
+                    Post(
+                        id = id,
+                        content = content,
+                        author = "Me",
+                        published = "13.12.2023 20:50",
+                    )
                 )
             )
-        )
+        } else {
+            dao.save(dao.getPostById(id).copy(content = content))
+        }
     }
 
     override fun deleteById(id: Long) {
         dao.deleteById(id)
     }
 
-    override fun editById(id: Long, text: String) {
-        dao.save(
-            dao.getPostById(id).copy(
-                id = id,
-                content = text,
-            )
-        )
-    }
 }

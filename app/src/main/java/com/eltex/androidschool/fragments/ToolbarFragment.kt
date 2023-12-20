@@ -36,18 +36,24 @@ class ToolbarFragment : Fragment() {
             requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
         binding.toolbar.setupWithNavController(navController)
 
-        val viewModel by activityViewModels<ToolbarViewModel>()
+        val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
         val item = binding.toolbar.menu.findItem(R.id.save)
 
-        viewModel.showSave
+        toolbarViewModel.showSave
             .onEach {
                 item.isVisible = it
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        toolbarViewModel.title
+            .onEach {
+                binding.toolbar.title = it
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         item.setOnMenuItemClickListener {
-            viewModel.saveClicked(true)
+            toolbarViewModel.saveClicked(true)
             true
         }
 

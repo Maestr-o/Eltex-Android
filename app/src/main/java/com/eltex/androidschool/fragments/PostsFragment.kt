@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,15 +20,13 @@ import com.eltex.androidschool.databinding.FragmentPostsBinding
 import com.eltex.androidschool.db.AppDb
 import com.eltex.androidschool.model.Post
 import com.eltex.androidschool.repository.SQLitePostRepository
+import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostViewModel
+import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class PostsFragment : Fragment() {
-
-    companion object {
-        const val ARG_POST_ID = "ARG_POST_ID"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +35,9 @@ class PostsFragment : Fragment() {
     ): View {
         val binding = FragmentPostsBinding.inflate(inflater, container, false)
 
+        val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+        toolbarViewModel.updateTitle(getString(R.string.app_name))
+
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
                 initializer {
@@ -44,6 +45,20 @@ class PostsFragment : Fragment() {
                         SQLitePostRepository(
                             AppDb.getInstance(requireContext().applicationContext).postDao
                         )
+                    )
+                }
+            }
+        }
+
+        val editPostViewModel by activityViewModels<EditPostViewModel> {
+            viewModelFactory {
+                initializer {
+                    EditPostViewModel(
+                        repository = SQLitePostRepository(
+                            AppDb.getInstance(
+                                requireContext().applicationContext
+                            ).postDao
+                        ),
                     )
                 }
             }
@@ -73,11 +88,8 @@ class PostsFragment : Fragment() {
                 }
 
                 override fun onEditClickListener(post: Post) {
-                    val bundle = bundleOf(ARG_POST_ID to post.id)
-                    findNavController().navigate(
-                        R.id.action_postsFragment_to_editPostFragment,
-                        bundle
-                    )
+                    editPostViewModel.update(post)
+                    findNavController().navigate(R.id.action_postsFragment_to_editPostFragment)
                 }
             }
         )
