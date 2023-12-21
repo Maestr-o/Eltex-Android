@@ -15,7 +15,7 @@ import com.eltex.androidschool.entity.PostEntity
 )
 abstract class AppDb : RoomDatabase() {
 
-    abstract val postDao: PostsDao
+    abstract val postsDao: PostsDao
     abstract val eventsDao: EventsDao
 
     companion object {

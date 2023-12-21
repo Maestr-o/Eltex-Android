@@ -17,8 +17,8 @@ class SQLitePostRepository(private val dao: PostsDao) : PostRepository {
     }
 
     override fun savePost(id: Long, content: String) {
-        val idx = dao.getPostById(id)
-        if (idx == null) {
+        val post = dao.getPostById(id)
+        if (post == null) {
             dao.save(
                 PostEntity.fromPost(
                     Post(
@@ -30,7 +30,7 @@ class SQLitePostRepository(private val dao: PostsDao) : PostRepository {
                 )
             )
         } else {
-            dao.save(dao.getPostById(id).copy(content = content))
+            dao.save(post.copy(content = content))
         }
     }
 

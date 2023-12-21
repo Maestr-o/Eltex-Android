@@ -20,30 +20,27 @@ class SQLiteEventRepository(private val dao: EventsDao) : EventRepository {
         dao.participatedById(id)
     }
 
-    override fun addEvent(content: String) {
-        dao.save(
-            EventEntity.fromEvent(
-                Event(
-                    content = content,
-                    author = "Me",
-                    datetime = "18.12.2023 17:00",
-                    published = "14.12.2023 20:35",
-                    link = "qwerty.com",
+    override fun saveEvent(id: Long, content: String) {
+        val event = dao.getEventById(id)
+        if (event == null) {
+            dao.save(
+                EventEntity.fromEvent(
+                    Event(
+                        id = id,
+                        content = content,
+                        author = "Me",
+                        published = "13.12.2023 20:50",
+                        link = "qwerty.com",
+                    )
                 )
             )
-        )
+        } else {
+            dao.save(event.copy(content = content))
+        }
     }
 
     override fun deleteById(id: Long) {
         dao.deleteById(id)
     }
 
-    override fun editById(id: Long, content: String) {
-        dao.save(
-            dao.getEventById(id).copy(
-                id = id,
-                content = content,
-            )
-        )
-    }
 }

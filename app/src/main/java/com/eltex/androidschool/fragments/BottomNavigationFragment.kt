@@ -12,13 +12,19 @@ import com.eltex.androidschool.databinding.FragmentBottomNavigationBinding
 
 class BottomNavigationFragment : Fragment() {
 
+    lateinit var binding: FragmentBottomNavigationBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
+        binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val navController =
             requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
 
@@ -29,7 +35,7 @@ class BottomNavigationFragment : Fragment() {
         }
 
         val newEventListener = View.OnClickListener {
-            // TODO
+            findNavController().navigate(R.id.action_bottomNavigationFragment_to_newEventFragment)
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -56,8 +62,6 @@ class BottomNavigationFragment : Fragment() {
                 }
             }
         }
-
-        return binding.root
     }
 
 }

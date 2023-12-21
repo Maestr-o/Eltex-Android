@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 class EditPostFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+    lateinit var binding: FragmentEditPostBinding
 
     override fun onStart() {
         super.onStart()
@@ -39,8 +40,12 @@ class EditPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val editPostViewModel by activityViewModels<EditPostViewModel>()
 
         editPostViewModel.post
@@ -63,8 +68,5 @@ class EditPostFragment : Fragment() {
                 toolbarViewModel.saveClicked(false)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        return binding.root
     }
-
 }

@@ -12,29 +12,29 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
-import com.eltex.androidschool.databinding.FragmentEditPostBinding
+import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.db.AppDb
-import com.eltex.androidschool.repository.SQLitePostRepository
+import com.eltex.androidschool.repository.SQLiteEventRepository
 import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.viewmodel.NewPostViewModel
+import com.eltex.androidschool.viewmodel.NewEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class NewPostFragment : Fragment() {
+class NewEventFragment : Fragment() {
 
     companion object {
-        const val ARG_POST_ID = "ARG_POST_ID"
+        const val ARG_EVENT_ID = "ARG_EVENT_ID"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-    lateinit var binding: FragmentEditPostBinding
+    lateinit var binding: FragmentEditEventBinding
 
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showSave(true)
-        toolbarViewModel.updateTitle(getString(R.string.new_post))
+        toolbarViewModel.updateTitle(getString(R.string.new_event))
     }
 
     override fun onStop() {
@@ -48,21 +48,21 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        binding = FragmentEditEventBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments?.getLong(ARG_POST_ID) ?: 0L
-        val newPostViewModel by viewModels<NewPostViewModel> {
+        val id = arguments?.getLong(ARG_EVENT_ID) ?: 0L
+        val newEventViewModel by viewModels<NewEventViewModel> {
             viewModelFactory {
                 initializer {
-                    NewPostViewModel(
-                        repository = SQLitePostRepository(
+                    NewEventViewModel(
+                        repository = SQLiteEventRepository(
                             AppDb.getInstance(
                                 requireContext().applicationContext
-                            ).postsDao
+                            ).eventsDao
                         ),
                         id = id,
                     )
@@ -75,7 +75,7 @@ class NewPostFragment : Fragment() {
             .onEach {
                 val content = binding.content.text?.toString().orEmpty()
                 if (content.isNotBlank()) {
-                    newPostViewModel.save(content)
+                    newEventViewModel.save(content)
                     findNavController().navigateUp()
                 } else {
                     requireContext().toast(R.string.empty_error, true)

@@ -28,12 +28,19 @@ import kotlinx.coroutines.flow.onEach
 
 class PostsFragment : Fragment() {
 
+    private lateinit var binding: FragmentPostsBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentPostsBinding.inflate(inflater, container, false)
+        binding = FragmentPostsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val toolbarViewModel by activityViewModels<ToolbarViewModel>()
         toolbarViewModel.updateTitle(getString(R.string.app_name))
@@ -43,7 +50,7 @@ class PostsFragment : Fragment() {
                 initializer {
                     PostViewModel(
                         SQLitePostRepository(
-                            AppDb.getInstance(requireContext().applicationContext).postDao
+                            AppDb.getInstance(requireContext().applicationContext).postsDao
                         )
                     )
                 }
@@ -57,7 +64,7 @@ class PostsFragment : Fragment() {
                         repository = SQLitePostRepository(
                             AppDb.getInstance(
                                 requireContext().applicationContext
-                            ).postDao
+                            ).postsDao
                         ),
                     )
                 }
@@ -105,8 +112,6 @@ class PostsFragment : Fragment() {
                 adapter.submitList(it.posts)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        return binding.root
     }
 
 }
