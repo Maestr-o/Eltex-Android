@@ -100,7 +100,8 @@ class EventsFragment : Fragment() {
 
                 override fun onEditClickListener(event: Event) {
                     editEventViewModel.update(event)
-                    findNavController().navigate(R.id.action_eventsFragment_to_editEventFragment)
+                    requireParentFragment().requireParentFragment().findNavController()
+                        .navigate(R.id.action_bottomNavigationFragment_to_editEventFragment)
                 }
             }
         )

@@ -96,7 +96,8 @@ class PostsFragment : Fragment() {
 
                 override fun onEditClickListener(post: Post) {
                     editPostViewModel.update(post)
-                    findNavController().navigate(R.id.action_postsFragment_to_editPostFragment)
+                    requireParentFragment().requireParentFragment().findNavController()
+                        .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
                 }
             }
         )

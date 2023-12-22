@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_newEventFragment"
             app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"
@@ -25,4 +31,12 @@
         android:id="@+id/newEventFragment"
         android:name="com.eltex.androidschool.fragments.NewEventFragment"
         android:label="NewEventFragment" />
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.eltex.androidschool.fragments.EditPostFragment"
+        android:label="EditPostFragment" />
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.eltex.androidschool.fragments.EditEventFragment"
+        android:label="EditEventFragment" />
 </navigation>

@@ -30,6 +30,7 @@ class SQLiteEventRepository(private val dao: EventsDao) : EventRepository {
                         content = content,
                         author = "Me",
                         published = "13.12.2023 20:50",
+                        datetime = "24.12.2023 14:00",
                         link = "qwerty.com",
                     )
                 )
