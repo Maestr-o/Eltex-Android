@@ -1,12 +1,12 @@
 package com.eltex.androidschool.repository
 
 import com.eltex.androidschool.model.Post
-import kotlinx.coroutines.flow.Flow
+import com.eltex.androidschool.utils.Callback
 
 interface PostRepository {
-    fun getPosts(): Flow<List<Post>>
-    fun likeById(id: Long)
-    fun savePost(id: Long, content: String)
-    fun deleteById(id: Long)
+    fun getPosts(callback: Callback<List<Post>>)
+    fun likeById(id: Long, callback: Callback<Post>)
+    fun savePost(id: Long, content: String, callback: Callback<Post>)
+    fun deleteById(id: Long, callback: Callback<Unit>)
 
 }

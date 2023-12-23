@@ -21,4 +21,7 @@
     <string name="posts_description">Посты</string>
     <string name="events_description">События</string>
     <string name="users_description">Люди</string>
+    <string name="network_error">Ошибка сети</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="retry">Повторить</string>
 </resources>

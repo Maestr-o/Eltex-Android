@@ -1,4 +1,4 @@
-package com.eltex.androidschool.adapter
+package com.eltex.androidschool.itemdecoration
 
 import android.graphics.Rect
 import android.view.View

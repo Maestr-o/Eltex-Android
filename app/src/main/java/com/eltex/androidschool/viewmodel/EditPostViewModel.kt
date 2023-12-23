@@ -2,13 +2,13 @@ package com.eltex.androidschool.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.model.Post
-import com.eltex.androidschool.repository.SQLitePostRepository
+import com.eltex.androidschool.repository.NetworkPostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class EditPostViewModel(
-    private val repository: SQLitePostRepository,
+    private val repository: NetworkPostRepository,
 ) : ViewModel() {
 
     private val _post = MutableStateFlow(Post())
@@ -19,6 +19,6 @@ class EditPostViewModel(
     }
 
     fun save(content: String) {
-        repository.savePost(post.value.id, content)
+
     }
 }

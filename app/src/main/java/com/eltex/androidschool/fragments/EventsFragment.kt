@@ -15,9 +15,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.EventsAdapter
-import com.eltex.androidschool.adapter.OffsetDecoration
 import com.eltex.androidschool.databinding.FragmentEventsBinding
 import com.eltex.androidschool.db.AppDb
+import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.model.Event
 import com.eltex.androidschool.repository.SQLiteEventRepository
 import com.eltex.androidschool.viewmodel.EditEventViewModel
