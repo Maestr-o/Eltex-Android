@@ -24,28 +24,17 @@ import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostViewModel
-import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class PostsFragment : Fragment() {
-
-    private lateinit var binding: FragmentPostsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPostsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-        toolbarViewModel.updateTitle(getString(R.string.app_name))
+        val binding = FragmentPostsBinding.inflate(inflater, container, false)
 
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
@@ -138,6 +127,8 @@ class PostsFragment : Fragment() {
                 adapter.submitList(state.posts)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        return binding.root
     }
 
 }

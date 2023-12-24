@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.onEach
 
 class ToolbarFragment : Fragment() {
 
-    lateinit var binding: FragmentToolbarBinding
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         parentFragmentManager.beginTransaction()
@@ -32,12 +30,8 @@ class ToolbarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentToolbarBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        val binding = FragmentToolbarBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val navController =
             requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
         binding.toolbar.setupWithNavController(navController)
@@ -52,15 +46,12 @@ class ToolbarFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        toolbarViewModel.title
-            .onEach {
-                binding.toolbar.title = it
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
         item.setOnMenuItemClickListener {
             toolbarViewModel.saveClicked(true)
             true
         }
+
+        return binding.root
     }
+
 }

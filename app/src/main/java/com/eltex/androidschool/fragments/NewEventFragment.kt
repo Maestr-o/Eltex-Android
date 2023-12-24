@@ -29,18 +29,15 @@ class NewEventFragment : Fragment() {
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-    lateinit var binding: FragmentEditEventBinding
 
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showSave(true)
-        toolbarViewModel.updateTitle(getString(R.string.new_event))
     }
 
     override fun onStop() {
         super.onStop()
         toolbarViewModel.showSave(false)
-        toolbarViewModel.updateTitle(getString(R.string.app_name))
     }
 
     override fun onCreateView(
@@ -48,12 +45,8 @@ class NewEventFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEditEventBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val id = arguments?.getLong(ARG_EVENT_ID) ?: 0L
         val newEventViewModel by viewModels<NewEventViewModel> {
             viewModelFactory {
@@ -83,5 +76,8 @@ class NewEventFragment : Fragment() {
                 toolbarViewModel.saveClicked(false)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        return binding.root
     }
+
 }

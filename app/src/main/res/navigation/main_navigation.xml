@@ -30,13 +30,13 @@
     <fragment
         android:id="@+id/newEventFragment"
         android:name="com.eltex.androidschool.fragments.NewEventFragment"
-        android:label="NewEventFragment" />
+        android:label="@string/new_event" />
     <fragment
         android:id="@+id/editPostFragment"
         android:name="com.eltex.androidschool.fragments.EditPostFragment"
-        android:label="EditPostFragment" />
+        android:label="@string/edit_post" />
     <fragment
         android:id="@+id/editEventFragment"
         android:name="com.eltex.androidschool.fragments.EditEventFragment"
-        android:label="EditEventFragment" />
+        android:label="@string/edit_event" />
 </navigation>

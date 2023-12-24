@@ -28,18 +28,15 @@ class EditPostFragment : Fragment() {
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-    lateinit var binding: FragmentEditPostBinding
 
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showSave(true)
-        toolbarViewModel.updateTitle(getString(R.string.edit_post))
     }
 
     override fun onStop() {
         super.onStop()
         toolbarViewModel.showSave(false)
-        toolbarViewModel.updateTitle(getString(R.string.app_name))
     }
 
     override fun onCreateView(
@@ -47,12 +44,8 @@ class EditPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEditPostBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        val binding = FragmentEditPostBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val editPostViewModel by activityViewModels<EditPostViewModel>()
 
         editPostViewModel.state.onEach { ui ->
@@ -91,5 +84,8 @@ class EditPostFragment : Fragment() {
                 toolbarViewModel.saveClicked(false)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        return binding.root
     }
+
 }

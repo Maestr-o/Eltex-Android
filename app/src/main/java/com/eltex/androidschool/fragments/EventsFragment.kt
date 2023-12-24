@@ -22,28 +22,17 @@ import com.eltex.androidschool.model.Event
 import com.eltex.androidschool.repository.SQLiteEventRepository
 import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventViewModel
-import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventsFragment : Fragment() {
-
-    private lateinit var binding: FragmentEventsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEventsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-        toolbarViewModel.updateTitle(getString(R.string.app_name))
+        val binding = FragmentEventsBinding.inflate(inflater, container, false)
 
         val viewModel by viewModels<EventViewModel> {
             viewModelFactory {
@@ -117,6 +106,8 @@ class EventsFragment : Fragment() {
                 adapter.submitList(it.events)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        return binding.root
     }
 
 }
