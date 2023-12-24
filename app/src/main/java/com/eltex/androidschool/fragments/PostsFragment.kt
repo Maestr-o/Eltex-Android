@@ -14,6 +14,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.databinding.FragmentPostsBinding
@@ -57,7 +58,7 @@ class PostsFragment : Fragment() {
         val editPostViewModel by activityViewModels<EditPostViewModel> {
             viewModelFactory {
                 initializer {
-                    PostViewModel(NetworkPostRepository())
+                    EditPostViewModel(NetworkPostRepository())
                 }
             }
         }
@@ -83,11 +84,12 @@ class PostsFragment : Fragment() {
 
                 override fun onDeleteClickListener(post: Post) {
                     viewModel.deleteById(post.id)
-                    viewModel.load() // TODO correct
                 }
 
                 override fun onEditClickListener(post: Post) {
-                    // TODO
+                    editPostViewModel.update(post)
+                    requireParentFragment().requireParentFragment().findNavController()
+                        .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
                 }
             }
         )

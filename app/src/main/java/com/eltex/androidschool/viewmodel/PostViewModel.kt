@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class PostViewModel(private val repository: PostRepository) : ViewModel() {
+class PostViewModel(
+    private val repository: PostRepository
+) : ViewModel() {
+
     private val _state = MutableStateFlow(PostUiState())
     val state: StateFlow<PostUiState> = _state.asStateFlow()
 
@@ -90,7 +93,7 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
                         state.copy(
                             posts = state.posts.orEmpty()
                                 .filter {
-                                    it.id == id
+                                    it.id != id
                                 },
                             status = Status.Idle
                         )
