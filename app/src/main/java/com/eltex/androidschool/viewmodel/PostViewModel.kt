@@ -76,7 +76,32 @@ class PostViewModel(
                 }
             )
         } else {
-            // TODO
+            repository.unlikeById(
+                post.id,
+                object : Callback<Post> {
+                    override fun onSuccess(data: Post) {
+                        _state.update { state ->
+                            state.copy(
+                                posts = state.posts.orEmpty()
+                                    .map {
+                                        if (it.id == post.id) {
+                                            data
+                                        } else {
+                                            it
+                                        }
+                                    },
+                                status = Status.Idle
+                            )
+                        }
+                    }
+
+                    override fun onError(throwable: Throwable) {
+                        _state.update {
+                            it.copy(status = Status.Error(throwable))
+                        }
+                    }
+                }
+            )
         }
     }
 

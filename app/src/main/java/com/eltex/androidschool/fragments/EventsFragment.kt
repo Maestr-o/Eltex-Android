@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,10 +18,10 @@ import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.databinding.FragmentEventsBinding
-import com.eltex.androidschool.db.AppDb
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.model.Event
-import com.eltex.androidschool.repository.SQLiteEventRepository
+import com.eltex.androidschool.repository.NetworkEventRepository
+import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -37,11 +39,7 @@ class EventsFragment : Fragment() {
         val viewModel by viewModels<EventViewModel> {
             viewModelFactory {
                 initializer {
-                    EventViewModel(
-                        SQLiteEventRepository(
-                            AppDb.getInstance(requireContext().applicationContext).eventsDao
-                        )
-                    )
+                    EventViewModel(NetworkEventRepository())
                 }
             }
         }
@@ -49,13 +47,7 @@ class EventsFragment : Fragment() {
         val editEventViewModel by activityViewModels<EditEventViewModel> {
             viewModelFactory {
                 initializer {
-                    EditEventViewModel(
-                        repository = SQLiteEventRepository(
-                            AppDb.getInstance(
-                                requireContext().applicationContext
-                            ).eventsDao
-                        ),
-                    )
+                    EditEventViewModel(NetworkEventRepository())
                 }
             }
         }
@@ -63,11 +55,11 @@ class EventsFragment : Fragment() {
         val adapter = EventsAdapter(
             object : EventsAdapter.EventListener {
                 override fun onLikeClickListener(event: Event) {
-                    viewModel.likeById(event.id)
+                    viewModel.likeById(event)
                 }
 
                 override fun onParticipateClickListener(event: Event) {
-                    viewModel.participateById(event.id)
+                    viewModel.participateById(event)
                 }
 
                 override fun onShareClickListener(event: Event) {
@@ -100,10 +92,43 @@ class EventsFragment : Fragment() {
             OffsetDecoration(resources.getDimensionPixelSize(R.dimen.small_spacing))
         )
 
-        viewModel.uiState
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.load()
+        }
+
+        binding.retryButton.setOnClickListener {
+            viewModel.load()
+        }
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            EditEventFragment.EVENT_UPDATED,
+            viewLifecycleOwner
+        ) { _, _ ->
+            viewModel.load()
+        }
+
+        viewModel.state
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
-            .onEach {
-                adapter.submitList(it.events)
+            .onEach { state ->
+                binding.swipeRefresh.isRefreshing = state.isRefreshing
+
+                val emptyError = state.emptyError
+                binding.errorGroup.isVisible = emptyError != null
+                binding.errorText.text = emptyError?.getText(requireContext())
+
+                binding.progress.isVisible = state.isEmptyLoading
+
+                state.refreshingError?.let {
+                    Toast.makeText(
+                        requireContext(),
+                        it.getText(requireContext()),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    viewModel.consumeError()
+                }
+
+                adapter.submitList(state.events)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

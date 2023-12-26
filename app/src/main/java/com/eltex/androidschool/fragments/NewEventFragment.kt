@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,8 +15,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
-import com.eltex.androidschool.db.AppDb
-import com.eltex.androidschool.repository.SQLiteEventRepository
+import com.eltex.androidschool.model.Status
+import com.eltex.androidschool.repository.NetworkEventRepository
+import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
@@ -25,7 +28,7 @@ import kotlinx.coroutines.flow.onEach
 class NewEventFragment : Fragment() {
 
     companion object {
-        const val ARG_EVENT_ID = "ARG_EVENT_ID"
+        const val EVENT_UPDATED = "EVENT_UPDATED"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
@@ -47,29 +50,42 @@ class NewEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val id = arguments?.getLong(ARG_EVENT_ID) ?: 0L
-        val newEventViewModel by viewModels<NewEventViewModel> {
+        val viewModel by viewModels<NewEventViewModel> {
             viewModelFactory {
                 initializer {
-                    NewEventViewModel(
-                        repository = SQLiteEventRepository(
-                            AppDb.getInstance(
-                                requireContext().applicationContext
-                            ).eventsDao
-                        ),
-                        id = id,
-                    )
+                    NewEventViewModel(repository = NetworkEventRepository())
                 }
             }
         }
+
+        viewModel.state.onEach { state ->
+            if (state.result != null) {
+                requireActivity().supportFragmentManager.setFragmentResult(
+                    EVENT_UPDATED,
+                    bundleOf()
+                )
+                findNavController().navigateUp()
+            }
+
+            (state.status as? Status.Error)?.let {
+                Toast.makeText(
+                    requireContext(),
+                    it.reason.getText(requireContext()),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            viewModel.consumeError()
+        }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         toolbarViewModel.saveClicked
             .filter { it }
             .onEach {
                 val content = binding.content.text?.toString().orEmpty()
+
                 if (content.isNotBlank()) {
-                    newEventViewModel.save(content)
-                    findNavController().navigateUp()
+                    viewModel.save(content)
                 } else {
                     requireContext().toast(R.string.empty_error, true)
                 }

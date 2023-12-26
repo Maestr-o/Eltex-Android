@@ -46,9 +46,9 @@ class EditPostFragment : Fragment() {
     ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
 
-        val editPostViewModel by activityViewModels<EditPostViewModel>()
+        val viewModel by activityViewModels<EditPostViewModel>()
 
-        editPostViewModel.state.onEach { ui ->
+        viewModel.state.onEach { ui ->
             if (ui.result != null) {
                 binding.content.setText(ui.result.content)
             }
@@ -61,7 +61,7 @@ class EditPostFragment : Fragment() {
                 ).show()
             }
 
-            editPostViewModel.consumeError()
+            viewModel.consumeError()
         }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -71,7 +71,7 @@ class EditPostFragment : Fragment() {
                 val content = binding.content.text?.toString().orEmpty()
 
                 if (content.isNotBlank()) {
-                    editPostViewModel.editById(content)
+                    viewModel.editById(content)
                     requireActivity().supportFragmentManager.setFragmentResult(
                         POST_UPDATED,
                         bundleOf()
