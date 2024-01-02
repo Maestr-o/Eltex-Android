@@ -14,6 +14,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
+import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.NetworkPostRepository
@@ -53,7 +54,7 @@ class NewPostFragment : Fragment() {
         val viewModel by viewModels<NewPostViewModel> {
             viewModelFactory {
                 initializer {
-                    NewPostViewModel(repository = NetworkPostRepository())
+                    NewPostViewModel(repository = NetworkPostRepository(PostsApi.INSTANCE))
                 }
             }
         }
