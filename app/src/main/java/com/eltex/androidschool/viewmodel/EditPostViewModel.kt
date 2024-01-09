@@ -21,8 +21,8 @@ class EditPostViewModel(
     val state = _state.asStateFlow()
 
     fun update(post: PostUiModel) {
-        _state.update { postUiState ->
-            postUiState.copy(
+        _state.update {
+            it.copy(
                 result = Post(
                     id = post.id,
                     content = post.content,
