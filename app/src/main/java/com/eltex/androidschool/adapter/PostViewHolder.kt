@@ -3,7 +3,7 @@ package com.eltex.androidschool.adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardPostBinding
-import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.model.PostUiModel
 
 class PostViewHolder(
     private val binding: CardPostBinding,
@@ -15,7 +15,7 @@ class PostViewHolder(
         }
     }
 
-    fun bindPost(post: Post) {
+    fun bindPost(post: PostUiModel) {
         binding.content.text = post.content
         binding.author.text = post.author
         binding.published.text = post.published

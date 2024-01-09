@@ -1,19 +1,26 @@
 package com.eltex.androidschool.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.mapper.PostUiModelMapper
+import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.PostRepository
-import com.eltex.androidschool.utils.Callback
+import com.eltex.androidschool.utils.SchedulersFactory
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class PostViewModel(
-    private val repository: PostRepository
+    private val repository: PostRepository,
+    private val mapper: PostUiModelMapper = PostUiModelMapper(),
+    private val schedulersFactory: SchedulersFactory = SchedulersFactory.DEFAULT,
 ) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val _state = MutableStateFlow(PostUiState())
     val state: StateFlow<PostUiState> = _state.asStateFlow()
 
@@ -26,33 +33,43 @@ class PostViewModel(
             it.copy(status = Status.Loading)
         }
 
-        repository.getPosts(
-            object : Callback<List<Post>> {
-                override fun onSuccess(data: List<Post>) {
+        repository.getPosts()
+            .observeOn(schedulersFactory.computation())
+            .map { posts ->
+                posts.map {
+                    mapper.map(it)
+                }
+            }
+            .observeOn(schedulersFactory.mainThread())
+            .subscribeBy(
+                onSuccess = { data ->
                     _state.update {
                         it.copy(posts = data, status = Status.Idle)
                     }
-                }
-
-                override fun onError(throwable: Throwable) {
+                },
+                onError = { throwable ->
                     _state.update {
                         it.copy(status = Status.Error(throwable))
                     }
                 }
-            }
-        )
+            )
+            .addTo(disposable)
     }
 
-    fun likeById(post: Post) {
+    fun likeById(post: PostUiModel) {
         _state.update {
             it.copy(status = Status.Loading)
         }
 
         if (!post.likedByMe) {
-            repository.likeById(
-                post.id,
-                object : Callback<Post> {
-                    override fun onSuccess(data: Post) {
+            repository.likeById(post.id)
+                .observeOn(schedulersFactory.computation())
+                .map {
+                    mapper.map(it)
+                }
+                .observeOn(schedulersFactory.mainThread())
+                .subscribeBy(
+                    onSuccess = { data ->
                         _state.update { state ->
                             state.copy(
                                 posts = state.posts.orEmpty()
@@ -66,20 +83,23 @@ class PostViewModel(
                                 status = Status.Idle
                             )
                         }
-                    }
-
-                    override fun onError(throwable: Throwable) {
+                    },
+                    onError = { throwable ->
                         _state.update {
                             it.copy(status = Status.Error(throwable))
                         }
                     }
-                }
-            )
+                )
+                .addTo(disposable)
         } else {
-            repository.unlikeById(
-                post.id,
-                object : Callback<Post> {
-                    override fun onSuccess(data: Post) {
+            repository.unlikeById(post.id)
+                .observeOn(schedulersFactory.computation())
+                .map {
+                    mapper.map(it)
+                }
+                .observeOn(schedulersFactory.mainThread())
+                .subscribeBy(
+                    onSuccess = { data ->
                         _state.update { state ->
                             state.copy(
                                 posts = state.posts.orEmpty()
@@ -93,15 +113,14 @@ class PostViewModel(
                                 status = Status.Idle
                             )
                         }
-                    }
-
-                    override fun onError(throwable: Throwable) {
+                    },
+                    onError = { throwable ->
                         _state.update {
                             it.copy(status = Status.Error(throwable))
                         }
                     }
-                }
-            )
+                )
+                .addTo(disposable)
         }
     }
 
@@ -110,10 +129,9 @@ class PostViewModel(
             it.copy(status = Status.Loading)
         }
 
-        repository.deleteById(
-            id,
-            object : Callback<Unit> {
-                override fun onSuccess(data: Unit) {
+        repository.deleteById(id)
+            .subscribeBy(
+                onComplete = {
                     _state.update { state ->
                         state.copy(
                             posts = state.posts.orEmpty()
@@ -123,15 +141,14 @@ class PostViewModel(
                             status = Status.Idle
                         )
                     }
-                }
-
-                override fun onError(throwable: Throwable) {
+                },
+                onError = { throwable ->
                     _state.update {
                         it.copy(status = Status.Error(throwable))
                     }
                 }
-            }
-        )
+            )
+            .addTo(disposable)
     }
 
     fun consumeError() {
@@ -144,4 +161,7 @@ class PostViewModel(
         }
     }
 
+    override fun onCleared() {
+        disposable.dispose()
+    }
 }
