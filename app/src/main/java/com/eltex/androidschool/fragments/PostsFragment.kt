@@ -20,7 +20,8 @@ import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentPostsBinding
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
-import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.mapper.PostUiModelMapper
+import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.viewmodel.EditPostViewModel
@@ -40,7 +41,7 @@ class PostsFragment : Fragment() {
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
                 initializer {
-                    PostViewModel(NetworkPostRepository(PostsApi.INSTANCE))
+                    PostViewModel(NetworkPostRepository(PostsApi.INSTANCE), PostUiModelMapper())
                 }
             }
         }
@@ -55,11 +56,11 @@ class PostsFragment : Fragment() {
 
         val adapter = PostsAdapter(
             object : PostsAdapter.PostListener {
-                override fun onLikeClickListener(post: Post) {
+                override fun onLikeClickListener(post: PostUiModel) {
                     viewModel.likeById(post)
                 }
 
-                override fun onShareClickListener(post: Post) {
+                override fun onShareClickListener(post: PostUiModel) {
                     val intentShare = Intent()
                         .setAction(Intent.ACTION_SEND)
                         .putExtra(
@@ -72,11 +73,11 @@ class PostsFragment : Fragment() {
                     startActivity(chooser)
                 }
 
-                override fun onDeleteClickListener(post: Post) {
+                override fun onDeleteClickListener(post: PostUiModel) {
                     viewModel.deleteById(post.id)
                 }
 
-                override fun onEditClickListener(post: Post) {
+                override fun onEditClickListener(post: PostUiModel) {
                     editPostViewModel.update(post)
                     requireParentFragment().requireParentFragment().findNavController()
                         .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
