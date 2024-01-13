@@ -1,14 +1,16 @@
 package com.eltex.androidschool.adapter
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
-import com.eltex.androidschool.model.Event
+import com.eltex.androidschool.model.EventUiModel
 
-class EventItemCallback : ItemCallback<Event>() {
-    override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean = newItem.id == oldItem.id
+class EventItemCallback : ItemCallback<EventUiModel>() {
+    override fun areItemsTheSame(oldItem: EventUiModel, newItem: EventUiModel): Boolean =
+        newItem.id == oldItem.id
 
-    override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean = newItem == oldItem
+    override fun areContentsTheSame(oldItem: EventUiModel, newItem: EventUiModel): Boolean =
+        newItem == oldItem
 
-    override fun getChangePayload(oldItem: Event, newItem: Event): Any? =
+    override fun getChangePayload(oldItem: EventUiModel, newItem: EventUiModel): Any? =
         EventPayload(
             participated = newItem.participatedByMe.takeIf {
                 it != oldItem.participatedByMe

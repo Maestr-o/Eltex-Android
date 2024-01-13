@@ -11,6 +11,5 @@ interface SchedulersFactory {
 
     companion object {
         val DEFAULT = object : SchedulersFactory {}
-
     }
 }
