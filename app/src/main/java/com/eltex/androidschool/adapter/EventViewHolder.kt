@@ -11,10 +11,16 @@ class EventViewHolder(
 
     fun bindEvent(payload: EventPayload) {
         if (payload.participated != null) {
-            updateParticipate(payload.participated)
+            updateParticipateIcon(payload.participated)
         }
         if (payload.liked != null) {
-            updateLike(payload.liked)
+            updateLikeIcon(payload.liked)
+        }
+        if (payload.participants != null) {
+            updateParticipateCount(payload.participants)
+        }
+        if (payload.likes != null) {
+            updateLikeCount(payload.likes)
         }
     }
 
@@ -26,45 +32,33 @@ class EventViewHolder(
         binding.eventType.text = event.type.toString()
         binding.eventTime.text = event.datetime
         binding.link.text = event.link
-        updateLike(event)
-        updateParticipate(event)
+        updateLikeIcon(event.likedByMe)
+        updateParticipateIcon(event.participatedByMe)
+        updateLikeCount(event.likes)
+        updateParticipateCount(event.participants)
     }
 
-    private fun updateLike(likedByMe: Boolean) {
-        binding.like.text = if (likedByMe) {
-            binding.like.setIconResource(R.drawable.baseline_favorite_24)
-            binding.like.text.toString().toInt() + 1
-        } else {
-            binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
-            binding.like.text.toString().toInt() - 1
-        }.toString()
-    }
-
-    private fun updateParticipate(participatedByMe: Boolean) {
-        binding.participate.text = if (participatedByMe) {
-            binding.participate.setIconResource(R.drawable.baseline_people_24)
-            binding.participate.text.toString().toInt() + 1
-        } else {
-            binding.participate.setIconResource(R.drawable.baseline_people_outline_24)
-            binding.participate.text.toString().toInt() - 1
-        }.toString()
-    }
-
-    private fun updateLike(event: EventUiModel) {
-        if (event.likedByMe) {
+    private fun updateLikeIcon(liked: Boolean) {
+        if (liked) {
             binding.like.setIconResource(R.drawable.baseline_favorite_24)
         } else {
             binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
         }
-        binding.like.text = event.likes.toString()
     }
 
-    private fun updateParticipate(event: EventUiModel) {
-        if (event.participatedByMe) {
+    private fun updateParticipateIcon(participated: Boolean) {
+        if (participated) {
             binding.participate.setIconResource(R.drawable.baseline_people_24)
         } else {
             binding.participate.setIconResource(R.drawable.baseline_people_outline_24)
         }
-        binding.participate.text = event.participants.toString()
+    }
+
+    private fun updateLikeCount(likes: Int) {
+        binding.like.text = likes.toString()
+    }
+
+    private fun updateParticipateCount(participants: Int) {
+        binding.participate.text = participants.toString()
     }
 }

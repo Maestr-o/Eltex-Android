@@ -1,8 +1,6 @@
 package com.eltex.androidschool.api
 
 import com.eltex.androidschool.model.Event
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -12,25 +10,25 @@ import retrofit2.http.Path
 
 interface EventsApi {
     @GET("api/events")
-    fun getAll(): Single<List<Event>>
+    suspend fun getAll(): List<Event>
 
     @POST("api/events")
-    fun save(@Body event: Event): Single<Event>
+    suspend fun save(@Body event: Event): Event
 
     @POST("api/events/{id}/likes")
-    fun like(@Path("id") id: Long): Single<Event>
+    suspend fun like(@Path("id") id: Long): Event
 
     @POST("api/events/{id}/participants")
-    fun participate(@Path("id") id: Long): Single<Event>
+    suspend fun participate(@Path("id") id: Long): Event
 
     @DELETE("api/events/{id}/likes")
-    fun unlike(@Path("id") id: Long): Single<Event>
+    suspend fun unlike(@Path("id") id: Long): Event
 
     @DELETE("api/events/{id}/participants")
-    fun unparticipate(@Path("id") id: Long): Single<Event>
+    suspend fun unparticipate(@Path("id") id: Long): Event
 
     @DELETE("api/events/{id}")
-    fun delete(@Path("id") id: Long): Completable
+    suspend fun delete(@Path("id") id: Long)
 
     companion object {
         val INSTANCE: EventsApi by lazy {

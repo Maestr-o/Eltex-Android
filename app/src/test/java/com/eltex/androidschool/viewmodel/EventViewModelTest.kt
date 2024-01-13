@@ -1,36 +1,38 @@
 package com.eltex.androidschool.viewmodel
 
-import com.eltex.androidschool.TestSchedulersFactory
+import com.eltex.androidschool.MainDispatcherRule
 import com.eltex.androidschool.model.Event
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.EventRepository
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 import junit.framework.TestCase
+import org.junit.Rule
 import org.junit.Test
 
 class EventViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `deleteById error then error in state`() {
         val testError = RuntimeException("Test error")
         val viewModel = EventViewModel(
             repository = object : EventRepository {
-                override fun getEvents(): Single<List<Event>> = Single.just(emptyList())
+                override suspend fun getEvents(): List<Event> = emptyList()
 
-                override fun likeById(id: Long): Single<Event> = Single.never()
+                override suspend fun likeById(id: Long): Event = error("Not implemented")
 
-                override fun unlikeById(id: Long): Single<Event> = Single.never()
+                override suspend fun unlikeById(id: Long): Event = error("Not implemented")
 
-                override fun saveEvent(id: Long, content: String): Single<Event> = Single.never()
+                override suspend fun participateById(id: Long): Event = error("Not implemented")
 
-                override fun deleteById(id: Long): Completable = Completable.error(testError)
+                override suspend fun unparticipateById(id: Long): Event = error("Not implemented")
 
-                override fun participateById(id: Long): Single<Event> = Single.never()
+                override suspend fun saveEvent(id: Long, content: String): Event =
+                    error("Not implemented")
 
-                override fun unparticipateById(id: Long): Single<Event> = Single.never()
+                override suspend fun deleteById(id: Long) = throw testError
             },
-            schedulersFactory = TestSchedulersFactory()
         )
         viewModel.deleteById(111)
         TestCase.assertEquals(testError, (viewModel.state.value.status as Status.Error).reason)

@@ -18,8 +18,12 @@ class EventItemCallback : ItemCallback<EventUiModel>() {
             liked = newItem.likedByMe.takeIf {
                 it != oldItem.likedByMe
             },
+            participants = newItem.participants.takeIf {
+                it != oldItem.participants
+            },
+            likes = newItem.likes.takeIf {
+                it != oldItem.likes
+            },
         )
-            .takeIf {
-                it.isNotEmpty()
-            }
+            .takeIf { it.isNotEmpty() }
 }
