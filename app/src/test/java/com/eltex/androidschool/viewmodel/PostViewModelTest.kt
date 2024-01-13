@@ -1,15 +1,17 @@
 package com.eltex.androidschool.viewmodel
 
-import com.eltex.androidschool.TestSchedulersFactory
+import com.eltex.androidschool.MainDispatcherRule
 import com.eltex.androidschool.model.Post
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.PostRepository
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 import junit.framework.TestCase.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class PostViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `deleteById error then error in state`() {
@@ -17,17 +19,17 @@ class PostViewModelTest {
 
         val viewModel = PostViewModel(
             repository = object : PostRepository {
-                override fun getPosts(): Single<List<Post>> = Single.just(emptyList())
+                override suspend fun getPosts(): List<Post> = emptyList()
 
-                override fun likeById(id: Long): Single<Post> = Single.never()
+                override suspend fun likeById(id: Long): Post = error("Not implemented")
 
-                override fun unlikeById(id: Long): Single<Post> = Single.never()
+                override suspend fun unlikeById(id: Long): Post = error("Not implemented")
 
-                override fun savePost(id: Long, content: String): Single<Post> = Single.never()
+                override suspend fun savePost(id: Long, content: String): Post =
+                    error("Not implemented")
 
-                override fun deleteById(id: Long): Completable = Completable.error(testError)
+                override suspend fun deleteById(id: Long) = throw testError
             },
-            schedulersFactory = TestSchedulersFactory()
         )
         viewModel.deleteById(111)
         assertEquals(testError, (viewModel.state.value.status as Status.Error).reason)

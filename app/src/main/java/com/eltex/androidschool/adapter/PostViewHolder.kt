@@ -11,7 +11,10 @@ class PostViewHolder(
 
     fun bindPost(payload: PostPayload) {
         if (payload.liked != null) {
-            updateLike(payload.liked)
+            updateLikeIcon(payload.liked)
+        }
+        if (payload.likes != null) {
+            updateLikeCount(payload.likes)
         }
     }
 
@@ -20,25 +23,19 @@ class PostViewHolder(
         binding.author.text = post.author
         binding.published.text = post.published
         binding.authorInitials.text = post.author.take(1)
-        updateLike(post)
+        updateLikeIcon(post.likedByMe)
+        updateLikeCount(post.likes)
     }
 
-    private fun updateLike(likedByMe: Boolean) {
-        binding.like.text = if (likedByMe) {
-            binding.like.setIconResource(R.drawable.baseline_favorite_24)
-            binding.like.text.toString().toInt() + 1
-        } else {
-            binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
-            binding.like.text.toString().toInt() - 1
-        }.toString()
-    }
-
-    private fun updateLike(event: PostUiModel) {
-        if (event.likedByMe) {
+    private fun updateLikeIcon(liked: Boolean) {
+        if (liked) {
             binding.like.setIconResource(R.drawable.baseline_favorite_24)
         } else {
             binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
         }
-        binding.like.text = event.likes.toString()
+    }
+
+    private fun updateLikeCount(likes: Int) {
+        binding.like.text = likes.toString()
     }
 }

@@ -62,7 +62,6 @@ android {
 }
 
 dependencies {
-    val lifecycleVersion = "2.6.2"
     val roomVersion = "2.6.1"
     val navigationVersion = "2.7.6"
     val retrofitVersion = "2.9.0"
@@ -73,7 +72,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.activity:activity-ktx:1.8.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("androidx.room:room-ktx:$roomVersion")
@@ -91,4 +90,5 @@ dependencies {
     implementation("com.squareup.retrofit2:adapter-rxjava3:$retrofitVersion")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
