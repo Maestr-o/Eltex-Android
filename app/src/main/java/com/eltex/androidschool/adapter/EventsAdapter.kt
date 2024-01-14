@@ -6,17 +6,17 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardEventBinding
-import com.eltex.androidschool.model.Event
+import com.eltex.androidschool.model.EventUiModel
 
 class EventsAdapter(private val listener: EventListener) :
-    ListAdapter<Event, EventViewHolder>(EventItemCallback()) {
+    ListAdapter<EventUiModel, EventViewHolder>(EventItemCallback()) {
 
     interface EventListener {
-        fun onLikeClickListener(event: Event)
-        fun onParticipateClickListener(event: Event)
-        fun onShareClickListener(event: Event)
-        fun onDeleteClickListener(event: Event)
-        fun onEditClickListener(event: Event)
+        fun onLikeClickListener(event: EventUiModel)
+        fun onParticipateClickListener(event: EventUiModel)
+        fun onShareClickListener(event: EventUiModel)
+        fun onDeleteClickListener(event: EventUiModel)
+        fun onEditClickListener(event: EventUiModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
