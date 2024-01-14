@@ -14,6 +14,7 @@ class NewEventViewModel(
     private val eventId: Long = 0,
 ) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val _state = MutableStateFlow(NewEventUiState())
     val state = _state.asStateFlow()
 
@@ -30,5 +31,9 @@ class NewEventViewModel(
 
     fun consumeError() {
         _state.update { it.copy(status = Status.Idle) }
+    }
+
+    override fun onCleared() {
+        disposable.dispose()
     }
 }

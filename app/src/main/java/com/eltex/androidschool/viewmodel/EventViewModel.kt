@@ -17,6 +17,7 @@ class EventViewModel(
     private val mapper: EventUiModelMapper = EventUiModelMapper(),
 ) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val _state = MutableStateFlow(EventUiState())
     val state: StateFlow<EventUiState> = _state.asStateFlow()
 

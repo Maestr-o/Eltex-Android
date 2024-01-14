@@ -61,4 +61,22 @@ class EventViewHolder(
     private fun updateParticipateCount(participants: Int) {
         binding.participate.text = participants.toString()
     }
+
+    private fun updateLike(event: EventUiModel) {
+        if (event.likedByMe) {
+            binding.like.setIconResource(R.drawable.baseline_favorite_24)
+        } else {
+            binding.like.setIconResource(R.drawable.baseline_favorite_border_24)
+        }
+        binding.like.text = event.likes.toString()
+    }
+
+    private fun updateParticipate(event: EventUiModel) {
+        if (event.participatedByMe) {
+            binding.participate.setIconResource(R.drawable.baseline_people_24)
+        } else {
+            binding.participate.setIconResource(R.drawable.baseline_people_outline_24)
+        }
+        binding.participate.text = event.participants.toString()
+    }
 }
