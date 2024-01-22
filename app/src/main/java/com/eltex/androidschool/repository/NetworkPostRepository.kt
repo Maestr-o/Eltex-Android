@@ -7,7 +7,9 @@ class NetworkPostRepository(
     private val api: PostsApi
 ) : PostRepository {
 
-    override suspend fun getPosts(): List<Post> = api.getAll()
+    override suspend fun getLatest(count: Int): List<Post> = api.getLatest(count)
+
+    override suspend fun getBefore(id: Long, count: Int): List<Post> = api.getBefore(id, count)
 
     override suspend fun likeById(id: Long): Post = api.like(id)
 

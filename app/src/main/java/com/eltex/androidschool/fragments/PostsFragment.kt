@@ -15,16 +15,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentPostsBinding
+import com.eltex.androidschool.effecthandler.PostEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.mapper.PostUiModelMapper
+import com.eltex.androidschool.model.PostMessage
 import com.eltex.androidschool.model.PostUiModel
+import com.eltex.androidschool.model.PostUiState
+import com.eltex.androidschool.reducer.PostReducer
 import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.viewmodel.EditPostViewModel
+import com.eltex.androidschool.viewmodel.PostStore
 import com.eltex.androidschool.viewmodel.PostViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,7 +47,17 @@ class PostsFragment : Fragment() {
         val viewModel by viewModels<PostViewModel> {
             viewModelFactory {
                 initializer {
-                    PostViewModel(NetworkPostRepository(PostsApi.INSTANCE), PostUiModelMapper())
+                    PostViewModel(
+                        PostStore(
+                            reducer = PostReducer(),
+                            effectHandler = PostEffectHandler(
+                                NetworkPostRepository(PostsApi.INSTANCE),
+                                PostUiModelMapper()
+                            ),
+                            initMessages = setOf(PostMessage.Refresh),
+                            initState = PostUiState(),
+                        ),
+                    )
                 }
             }
         }
@@ -57,7 +73,7 @@ class PostsFragment : Fragment() {
         val adapter = PostsAdapter(
             object : PostsAdapter.PostListener {
                 override fun onLikeClickListener(post: PostUiModel) {
-                    viewModel.likeById(post)
+                    viewModel.accept(PostMessage.Like(post))
                 }
 
                 override fun onShareClickListener(post: PostUiModel) {
@@ -74,7 +90,7 @@ class PostsFragment : Fragment() {
                 }
 
                 override fun onDeleteClickListener(post: PostUiModel) {
-                    viewModel.deleteById(post.id)
+                    viewModel.accept(PostMessage.Delete(post))
                 }
 
                 override fun onEditClickListener(post: PostUiModel) {
@@ -91,46 +107,50 @@ class PostsFragment : Fragment() {
         )
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.load()
+            viewModel.accept(PostMessage.Refresh)
         }
 
         binding.retryButton.setOnClickListener {
-            viewModel.load()
+            viewModel.accept(PostMessage.LoadNextPage)
         }
 
         requireActivity().supportFragmentManager.setFragmentResultListener(
             NewPostFragment.POST_UPDATED,
             viewLifecycleOwner
         ) { _, _ ->
-            viewModel.load()
+            viewModel.accept(PostMessage.Refresh)
         }
 
-        viewModel.state
+        binding.list.addOnChildAttachStateChangeListener(object :
+            RecyclerView.OnChildAttachStateChangeListener {
+            override fun onChildViewAttachedToWindow(view: View) {
+                val count = adapter.itemCount
+                val position = binding.list.getChildAdapterPosition(view)
+                if (position != count - 1) return
+                viewModel.accept(PostMessage.LoadNextPage)
+            }
+
+            override fun onChildViewDetachedFromWindow(view: View) = Unit
+        })
+        viewModel.uiState
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
-
                 val emptyError = state.emptyError
                 binding.errorGroup.isVisible = emptyError != null
                 binding.errorText.text = emptyError?.getText(requireContext())
-
                 binding.progress.isVisible = state.isEmptyLoading
-
-                state.refreshingError?.let {
+                state.singleError?.let {
                     Toast.makeText(
                         requireContext(),
                         it.getText(requireContext()),
                         Toast.LENGTH_SHORT
                     ).show()
-
-                    viewModel.consumeError()
+                    viewModel.accept(PostMessage.HandleError)
                 }
-
                 adapter.submitList(state.posts)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
         return binding.root
     }
-
 }
