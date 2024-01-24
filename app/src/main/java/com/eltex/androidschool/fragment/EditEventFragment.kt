@@ -1,4 +1,4 @@
-package com.eltex.androidschool.fragments
+package com.eltex.androidschool.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,20 +11,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
-import com.eltex.androidschool.databinding.FragmentEditPostBinding
+import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.viewmodel.EditPostViewModel
+import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class EditPostFragment : Fragment() {
+class EditEventFragment : Fragment() {
 
     companion object {
-        const val POST_UPDATED = "POST_UPDATED"
+        const val EVENT_UPDATED = "EVENT_UPDATED"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
@@ -44,9 +44,9 @@ class EditPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val viewModel by activityViewModels<EditPostViewModel>()
+        val viewModel by activityViewModels<EditEventViewModel>()
 
         viewModel.state.onEach { ui ->
             if (ui.result != null) {
@@ -73,7 +73,7 @@ class EditPostFragment : Fragment() {
                 if (content.isNotBlank()) {
                     viewModel.editById(content)
                     requireActivity().supportFragmentManager.setFragmentResult(
-                        POST_UPDATED,
+                        EVENT_UPDATED,
                         bundleOf()
                     )
                     findNavController().navigateUp()
@@ -87,5 +87,4 @@ class EditPostFragment : Fragment() {
 
         return binding.root
     }
-
 }

@@ -1,4 +1,4 @@
-package com.eltex.androidschool.fragments
+package com.eltex.androidschool.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

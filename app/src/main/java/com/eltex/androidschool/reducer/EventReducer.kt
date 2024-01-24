@@ -1,0 +1,191 @@
+package com.eltex.androidschool.reducer
+
+import com.eltex.androidschool.model.EventEffect
+import com.eltex.androidschool.model.EventMessage
+import com.eltex.androidschool.model.NoteStatus
+import com.eltex.androidschool.mvi.Reducer
+import com.eltex.androidschool.mvi.ReducerResult
+import com.eltex.androidschool.utils.Either
+import com.eltex.androidschool.viewmodel.EventUiState
+
+class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
+    override fun reduce(
+        old: EventUiState,
+        message: EventMessage,
+    ): ReducerResult<EventUiState, EventEffect> = when (message) {
+        is EventMessage.Like -> ReducerResult(
+            old.copy(
+                events = old.events.map {
+                    if (it.id == message.event.id) {
+                        it.copy(
+                            likedByMe = !it.likedByMe,
+                            likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
+                        )
+                    } else {
+                        it
+                    }
+                }
+            ),
+            EventEffect.Like(message.event)
+        )
+
+        is EventMessage.Participate -> ReducerResult(
+            old.copy(
+                events = old.events.map {
+                    if (it.id == message.event.id) {
+                        it.copy(
+                            participatedByMe = !it.participatedByMe,
+                            participants = if (it.participatedByMe) {
+                                it.participants - 1
+                            } else {
+                                it.participants + 1
+                            }
+                        )
+                    } else {
+                        it
+                    }
+                }
+            ),
+            EventEffect.Participate(message.event)
+        )
+
+        EventMessage.LoadNextPage -> {
+            val nextId = old.events.lastOrNull()?.id
+            if (nextId == null || old.isNextPageLoading) {
+                ReducerResult(old)
+            } else {
+                ReducerResult(
+                    old.copy(status = NoteStatus.NextPageLoading),
+                    EventEffect.LoadNextPage(nextId, 10),
+                )
+            }
+        }
+
+        EventMessage.Refresh -> ReducerResult(
+            old.copy(
+                status = if (old.events.isEmpty()) {
+                    NoteStatus.EmptyLoading
+                } else {
+                    NoteStatus.Refreshing
+                }
+            ),
+            EventEffect.LoadInitialPage(count = 15),
+        )
+
+        is EventMessage.Delete -> ReducerResult(
+            old.copy(events = old.events.filter { it.id != message.event.id }),
+            EventEffect.Delete(message.event),
+        )
+
+        is EventMessage.DeleteError -> with(message.error) {
+            ReducerResult(
+                old.copy(
+                    events = buildList(old.events.size + 1) {
+                        addAll(old.events.takeWhile { it.id > eventUiModel.id })
+                        add(eventUiModel)
+                        addAll(old.events.takeLastWhile { it.id < eventUiModel.id })
+                    },
+                    singleError = throwable,
+                )
+            )
+        }
+
+        is EventMessage.NextPageLoaded -> ReducerResult(
+            when (message.result) {
+                is Either.Left -> {
+                    old.copy(status = NoteStatus.NextPageError(message.result.value))
+                }
+
+                is Either.Right -> old.copy(
+                    events = old.events + message.result.value,
+                    status = NoteStatus.Idle,
+                )
+            }
+        )
+
+        is EventMessage.LikeResult -> ReducerResult(
+            when (val result = message.result) {
+                is Either.Left -> {
+                    val value = result.value
+                    val event = value.eventUiModel
+                    old.copy(
+                        events = old.events.map {
+                            if (it.id == event.id) {
+                                event
+                            } else {
+                                it
+                            }
+                        },
+                        singleError = value.throwable,
+                    )
+                }
+
+                is Either.Right -> {
+                    val event = result.value
+                    old.copy(
+                        events = old.events.map {
+                            if (it.id == event.id) {
+                                event
+                            } else {
+                                it
+                            }
+                        },
+                    )
+                }
+            }
+        )
+
+        is EventMessage.ParticipateResult -> ReducerResult(
+            when (val result = message.result) {
+                is Either.Left -> {
+                    val value = result.value
+                    val event = value.eventUiModel
+                    old.copy(
+                        events = old.events.map {
+                            if (it.id == event.id) {
+                                event
+                            } else {
+                                it
+                            }
+                        },
+                        singleError = value.throwable,
+                    )
+                }
+
+                is Either.Right -> {
+                    val event = result.value
+                    old.copy(
+                        events = old.events.map {
+                            if (it.id == event.id) {
+                                event
+                            } else {
+                                it
+                            }
+                        },
+                    )
+                }
+            }
+        )
+
+        EventMessage.HandleError -> ReducerResult(
+            old.copy(singleError = null)
+        )
+
+        is EventMessage.InitialLoaded -> ReducerResult(
+            when (val result = message.result) {
+                is Either.Left -> {
+                    if (old.events.isEmpty()) {
+                        old.copy(status = NoteStatus.EmptyError(result.value))
+                    } else {
+                        old.copy(singleError = result.value)
+                    }
+                }
+
+                is Either.Right -> old.copy(
+                    events = result.value,
+                    status = NoteStatus.Idle,
+                )
+            }
+        )
+    }
+}

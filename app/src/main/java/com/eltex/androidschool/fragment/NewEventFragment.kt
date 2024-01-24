@@ -1,4 +1,4 @@
-package com.eltex.androidschool.fragments
+package com.eltex.androidschool.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,22 +14,22 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
-import com.eltex.androidschool.api.PostsApi
-import com.eltex.androidschool.databinding.FragmentEditPostBinding
+import com.eltex.androidschool.api.EventsApi
+import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.model.Status
-import com.eltex.androidschool.repository.NetworkPostRepository
+import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.viewmodel.NewPostViewModel
+import com.eltex.androidschool.viewmodel.NewEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class NewPostFragment : Fragment() {
+class NewEventFragment : Fragment() {
 
     companion object {
-        const val POST_UPDATED = "POST_UPDATED"
+        const val EVENT_UPDATED = "EVENT_UPDATED"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
@@ -49,19 +49,22 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<NewPostViewModel> {
+        val viewModel by viewModels<NewEventViewModel> {
             viewModelFactory {
                 initializer {
-                    NewPostViewModel(repository = NetworkPostRepository(PostsApi.INSTANCE))
+                    NewEventViewModel(repository = NetworkEventRepository(EventsApi.INSTANCE))
                 }
             }
         }
 
         viewModel.state.onEach { state ->
             if (state.result != null) {
-                requireActivity().supportFragmentManager.setFragmentResult(POST_UPDATED, bundleOf())
+                requireActivity().supportFragmentManager.setFragmentResult(
+                    EVENT_UPDATED,
+                    bundleOf()
+                )
                 findNavController().navigateUp()
             }
 

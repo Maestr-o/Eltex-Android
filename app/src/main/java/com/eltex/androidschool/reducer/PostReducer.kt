@@ -1,8 +1,8 @@
 package com.eltex.androidschool.reducer
 
+import com.eltex.androidschool.model.NoteStatus
 import com.eltex.androidschool.model.PostEffect
 import com.eltex.androidschool.model.PostMessage
-import com.eltex.androidschool.model.PostStatus
 import com.eltex.androidschool.model.PostUiState
 import com.eltex.androidschool.mvi.Reducer
 import com.eltex.androidschool.mvi.ReducerResult
@@ -35,7 +35,7 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
                 ReducerResult(old)
             } else {
                 ReducerResult(
-                    old.copy(status = PostStatus.NextPageLoading),
+                    old.copy(status = NoteStatus.NextPageLoading),
                     PostEffect.LoadNextPage(nextId, 10),
                 )
             }
@@ -44,9 +44,9 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
         PostMessage.Refresh -> ReducerResult(
             old.copy(
                 status = if (old.posts.isEmpty()) {
-                    PostStatus.EmptyLoading
+                    NoteStatus.EmptyLoading
                 } else {
-                    PostStatus.Refreshing
+                    NoteStatus.Refreshing
                 }
             ),
             PostEffect.LoadInitialPage(count = 15),
@@ -73,12 +73,12 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
         is PostMessage.NextPageLoaded -> ReducerResult(
             when (message.result) {
                 is Either.Left -> {
-                    old.copy(status = PostStatus.NextPageError(message.result.value))
+                    old.copy(status = NoteStatus.NextPageError(message.result.value))
                 }
 
                 is Either.Right -> old.copy(
                     posts = old.posts + message.result.value,
-                    status = PostStatus.Idle,
+                    status = NoteStatus.Idle,
                 )
             }
         )
@@ -123,7 +123,7 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
             when (val result = message.result) {
                 is Either.Left -> {
                     if (old.posts.isEmpty()) {
-                        old.copy(status = PostStatus.EmptyError(result.value))
+                        old.copy(status = NoteStatus.EmptyError(result.value))
                     } else {
                         old.copy(singleError = result.value)
                     }
@@ -131,7 +131,7 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
 
                 is Either.Right -> old.copy(
                     posts = result.value,
-                    status = PostStatus.Idle,
+                    status = NoteStatus.Idle,
                 )
             }
         )

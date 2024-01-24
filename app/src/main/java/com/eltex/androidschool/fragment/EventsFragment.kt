@@ -1,4 +1,4 @@
-package com.eltex.androidschool.fragments
+package com.eltex.androidschool.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,71 +17,75 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
-import com.eltex.androidschool.adapter.PostsAdapter
-import com.eltex.androidschool.api.PostsApi
-import com.eltex.androidschool.databinding.FragmentPostsBinding
-import com.eltex.androidschool.effecthandler.PostEffectHandler
+import com.eltex.androidschool.adapter.EventsAdapter
+import com.eltex.androidschool.api.EventsApi
+import com.eltex.androidschool.databinding.FragmentEventsBinding
+import com.eltex.androidschool.effecthandler.EventEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
-import com.eltex.androidschool.mapper.PostUiModelMapper
-import com.eltex.androidschool.model.PostMessage
-import com.eltex.androidschool.model.PostUiModel
-import com.eltex.androidschool.model.PostUiState
-import com.eltex.androidschool.reducer.PostReducer
-import com.eltex.androidschool.repository.NetworkPostRepository
+import com.eltex.androidschool.mapper.EventUiModelMapper
+import com.eltex.androidschool.model.EventMessage
+import com.eltex.androidschool.model.EventUiModel
+import com.eltex.androidschool.reducer.EventReducer
+import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
-import com.eltex.androidschool.viewmodel.EditPostViewModel
-import com.eltex.androidschool.viewmodel.PostStore
-import com.eltex.androidschool.viewmodel.PostViewModel
+import com.eltex.androidschool.viewmodel.EditEventViewModel
+import com.eltex.androidschool.viewmodel.EventStore
+import com.eltex.androidschool.viewmodel.EventUiState
+import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class PostsFragment : Fragment() {
+class EventsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentPostsBinding.inflate(inflater, container, false)
+        val binding = FragmentEventsBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<PostViewModel> {
+        val viewModel by viewModels<EventViewModel> {
             viewModelFactory {
                 initializer {
-                    PostViewModel(
-                        PostStore(
-                            reducer = PostReducer(),
-                            effectHandler = PostEffectHandler(
-                                NetworkPostRepository(PostsApi.INSTANCE),
-                                PostUiModelMapper()
+                    EventViewModel(
+                        EventStore(
+                            reducer = EventReducer(),
+                            effectHandler = EventEffectHandler(
+                                NetworkEventRepository(EventsApi.INSTANCE),
+                                EventUiModelMapper()
                             ),
-                            initMessages = setOf(PostMessage.Refresh),
-                            initState = PostUiState(),
+                            initMessages = setOf(EventMessage.Refresh),
+                            initState = EventUiState(),
                         ),
                     )
                 }
             }
         }
 
-        val editPostViewModel by activityViewModels<EditPostViewModel> {
+        val editEventViewModel by activityViewModels<EditEventViewModel> {
             viewModelFactory {
                 initializer {
-                    EditPostViewModel(NetworkPostRepository(PostsApi.INSTANCE))
+                    EditEventViewModel(NetworkEventRepository(EventsApi.INSTANCE))
                 }
             }
         }
 
-        val adapter = PostsAdapter(
-            object : PostsAdapter.PostListener {
-                override fun onLikeClickListener(post: PostUiModel) {
-                    viewModel.accept(PostMessage.Like(post))
+        val adapter = EventsAdapter(
+            object : EventsAdapter.EventListener {
+                override fun onLikeClickListener(event: EventUiModel) {
+                    viewModel.accept(EventMessage.Like(event))
                 }
 
-                override fun onShareClickListener(post: PostUiModel) {
+                override fun onParticipateClickListener(event: EventUiModel) {
+                    viewModel.accept(EventMessage.Participate(event))
+                }
+
+                override fun onShareClickListener(event: EventUiModel) {
                     val intentShare = Intent()
                         .setAction(Intent.ACTION_SEND)
                         .putExtra(
                             Intent.EXTRA_TEXT,
-                            getString(R.string.share_text, post.author, post.content)
+                            getString(R.string.share_text, event.author, event.content)
                         )
                         .setType("text/plain")
 
@@ -89,14 +93,14 @@ class PostsFragment : Fragment() {
                     startActivity(chooser)
                 }
 
-                override fun onDeleteClickListener(post: PostUiModel) {
-                    viewModel.accept(PostMessage.Delete(post))
+                override fun onDeleteClickListener(event: EventUiModel) {
+                    viewModel.accept(EventMessage.Delete(event))
                 }
 
-                override fun onEditClickListener(post: PostUiModel) {
-                    editPostViewModel.update(post)
+                override fun onEditClickListener(event: EventUiModel) {
+                    editEventViewModel.update(event)
                     requireParentFragment().requireParentFragment().findNavController()
-                        .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
+                        .navigate(R.id.action_bottomNavigationFragment_to_editEventFragment)
                 }
             }
         )
@@ -107,31 +111,33 @@ class PostsFragment : Fragment() {
         )
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.accept(PostMessage.Refresh)
+            viewModel.accept(EventMessage.Refresh)
         }
 
         binding.retryButton.setOnClickListener {
-            viewModel.accept(PostMessage.LoadNextPage)
+            viewModel.accept(EventMessage.Refresh)
         }
 
         requireActivity().supportFragmentManager.setFragmentResultListener(
-            NewPostFragment.POST_UPDATED,
+            EditEventFragment.EVENT_UPDATED,
             viewLifecycleOwner
         ) { _, _ ->
-            viewModel.accept(PostMessage.Refresh)
+            viewModel.accept(EventMessage.Refresh)
         }
 
         binding.list.addOnChildAttachStateChangeListener(object :
             RecyclerView.OnChildAttachStateChangeListener {
+
             override fun onChildViewAttachedToWindow(view: View) {
                 val count = adapter.itemCount
                 val position = binding.list.getChildAdapterPosition(view)
                 if (position != count - 1) return
-                viewModel.accept(PostMessage.LoadNextPage)
+                viewModel.accept(EventMessage.LoadNextPage)
             }
 
             override fun onChildViewDetachedFromWindow(view: View) = Unit
         })
+
         viewModel.uiState
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
@@ -146,11 +152,12 @@ class PostsFragment : Fragment() {
                         it.getText(requireContext()),
                         Toast.LENGTH_SHORT
                     ).show()
-                    viewModel.accept(PostMessage.HandleError)
+                    viewModel.accept(EventMessage.HandleError)
                 }
-                adapter.submitList(state.posts)
+                adapter.submitList(state.events)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
         return binding.root
     }
 }

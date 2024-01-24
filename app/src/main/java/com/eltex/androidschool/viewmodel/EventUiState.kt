@@ -1,18 +1,15 @@
 package com.eltex.androidschool.viewmodel
 
 import com.eltex.androidschool.model.EventUiModel
-import com.eltex.androidschool.model.Status
+import com.eltex.androidschool.model.NoteStatus
 
 data class EventUiState(
-    val events: List<EventUiModel>? = null,
-    val status: Status = Status.Idle,
+    val events: List<EventUiModel> = emptyList(),
+    val status: NoteStatus = NoteStatus.Idle,
+    val singleError: Throwable? = null,
 ) {
-    val isRefreshing: Boolean = status == Status.Loading && events != null
-    val isEmptyLoading: Boolean = status == Status.Loading && events == null
-    val emptyError: Throwable? = (status as? Status.Error)?.reason?.takeIf {
-        events == null
-    }
-    val refreshingError: Throwable? = (status as? Status.Error)?.reason?.takeIf {
-        events != null
-    }
+    val isRefreshing: Boolean = status == NoteStatus.Refreshing
+    val emptyError: Throwable? = (status as? NoteStatus.EmptyError)?.reason
+    val isEmptyLoading: Boolean = status == NoteStatus.EmptyLoading
+    val isNextPageLoading: Boolean = status == NoteStatus.NextPageLoading
 }
