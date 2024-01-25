@@ -24,4 +24,6 @@
     <string name="network_error">Ошибка сети</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="retry">Повторить</string>
+    <string name="skeleton_likes">10</string>
+    <string name="skeleton_text">Как вы относитесь к тому, чтобы собраться?</string>
 </resources>

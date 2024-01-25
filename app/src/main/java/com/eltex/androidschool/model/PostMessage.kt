@@ -6,6 +6,7 @@ sealed interface PostMessage {
     // => к серверу
     data object LoadNextPage : PostMessage
     data object Refresh : PostMessage
+    data object Retry : PostMessage
     data class Like(val post: PostUiModel) : PostMessage
     data class Delete(val post: PostUiModel) : PostMessage
     data object HandleError : PostMessage

@@ -9,10 +9,17 @@ import com.eltex.androidschool.mvi.ReducerResult
 import com.eltex.androidschool.utils.Either
 
 class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
+
+    companion object {
+        const val PAGE_SIZE = 10
+        const val INITIAL_LOAD_SIZE = 15
+    }
+
     override fun reduce(
         old: PostUiState,
         message: PostMessage,
     ): ReducerResult<PostUiState, PostEffect> = when (message) {
+
         is PostMessage.Like -> ReducerResult(
             old.copy(
                 posts = old.posts.map {
@@ -29,17 +36,19 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
             PostEffect.Like(message.post)
         )
 
-        PostMessage.LoadNextPage -> {
-            val nextId = old.posts.lastOrNull()?.id
-            if (nextId == null || old.isNextPageLoading) {
-                ReducerResult(old)
-            } else {
-                ReducerResult(
-                    old.copy(status = NoteStatus.NextPageLoading),
-                    PostEffect.LoadNextPage(nextId, 10),
-                )
-            }
+        PostMessage.LoadNextPage -> if (old.status == NoteStatus.Idle()) {
+            ReducerResult(
+                old.copy(status = NoteStatus.NextPageLoading),
+                PostEffect.LoadNextPage(old.posts.last().id, PAGE_SIZE),
+            )
+        } else {
+            ReducerResult(old)
         }
+
+        PostMessage.Retry -> ReducerResult(
+            old.copy(status = NoteStatus.NextPageLoading),
+            PostEffect.LoadNextPage(old.posts.last().id, PAGE_SIZE),
+        )
 
         PostMessage.Refresh -> ReducerResult(
             old.copy(
@@ -49,7 +58,7 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
                     NoteStatus.Refreshing
                 }
             ),
-            PostEffect.LoadInitialPage(count = 15),
+            PostEffect.LoadInitialPage(count = INITIAL_LOAD_SIZE),
         )
 
         is PostMessage.Delete -> ReducerResult(
@@ -71,14 +80,14 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
         }
 
         is PostMessage.NextPageLoaded -> ReducerResult(
-            when (message.result) {
+            when (val result = message.result) {
                 is Either.Left -> {
-                    old.copy(status = NoteStatus.NextPageError(message.result.value))
+                    old.copy(status = NoteStatus.NextPageError(result.value))
                 }
 
                 is Either.Right -> old.copy(
-                    posts = old.posts + message.result.value,
-                    status = NoteStatus.Idle,
+                    posts = old.posts + result.value,
+                    status = NoteStatus.Idle(result.value.size < PAGE_SIZE),
                 )
             }
         )
@@ -131,7 +140,7 @@ class PostReducer : Reducer<PostUiState, PostEffect, PostMessage> {
 
                 is Either.Right -> old.copy(
                     posts = result.value,
-                    status = NoteStatus.Idle,
+                    status = NoteStatus.Idle(result.value.size < INITIAL_LOAD_SIZE),
                 )
             }
         )

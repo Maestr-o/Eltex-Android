@@ -1,7 +1,7 @@
 package com.eltex.androidschool.model
 
 sealed interface NoteStatus {
-    data object Idle : NoteStatus
+    data class Idle(val finished: Boolean = false) : NoteStatus
     data object NextPageLoading : NoteStatus
     data object EmptyLoading : NoteStatus
     data object Refreshing : NoteStatus

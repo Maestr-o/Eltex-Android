@@ -5,7 +5,7 @@ import com.eltex.androidschool.model.NoteStatus
 
 data class EventUiState(
     val events: List<EventUiModel> = emptyList(),
-    val status: NoteStatus = NoteStatus.Idle,
+    val status: NoteStatus = NoteStatus.Idle(),
     val singleError: Throwable? = null,
 ) {
     val isRefreshing: Boolean = status == NoteStatus.Refreshing

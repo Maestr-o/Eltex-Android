@@ -9,6 +9,12 @@ import com.eltex.androidschool.utils.Either
 import com.eltex.androidschool.viewmodel.EventUiState
 
 class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
+
+    private companion object {
+        const val PAGE_SIZE = 10
+        const val INITIAL_LOAD_SIZE = PAGE_SIZE * 2
+    }
+
     override fun reduce(
         old: EventUiState,
         message: EventMessage,
@@ -56,7 +62,7 @@ class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
             } else {
                 ReducerResult(
                     old.copy(status = NoteStatus.NextPageLoading),
-                    EventEffect.LoadNextPage(nextId, 10),
+                    EventEffect.LoadNextPage(nextId, PAGE_SIZE),
                 )
             }
         }
@@ -69,7 +75,7 @@ class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
                     NoteStatus.Refreshing
                 }
             ),
-            EventEffect.LoadInitialPage(count = 15),
+            EventEffect.LoadInitialPage(count = INITIAL_LOAD_SIZE),
         )
 
         is EventMessage.Delete -> ReducerResult(
@@ -91,14 +97,14 @@ class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
         }
 
         is EventMessage.NextPageLoaded -> ReducerResult(
-            when (message.result) {
+            when (val result = message.result) {
                 is Either.Left -> {
-                    old.copy(status = NoteStatus.NextPageError(message.result.value))
+                    old.copy(status = NoteStatus.NextPageError(result.value))
                 }
 
                 is Either.Right -> old.copy(
-                    events = old.events + message.result.value,
-                    status = NoteStatus.Idle,
+                    events = old.events + result.value,
+                    status = NoteStatus.Idle(result.value.size < PAGE_SIZE),
                 )
             }
         )
@@ -183,7 +189,7 @@ class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
 
                 is Either.Right -> old.copy(
                     events = result.value,
-                    status = NoteStatus.Idle,
+                    status = NoteStatus.Idle(result.value.size < INITIAL_LOAD_SIZE),
                 )
             }
         )

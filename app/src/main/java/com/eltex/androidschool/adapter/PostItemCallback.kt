@@ -17,7 +17,10 @@ class PostItemCallback : ItemCallback<PostUiModel>() {
             },
             likes = newItem.likes.takeIf {
                 it != oldItem.likes
-            }
+            },
+            content = newItem.content.takeIf {
+                it != oldItem.content
+            },
         )
             .takeIf { it.isNotEmpty() }
 }

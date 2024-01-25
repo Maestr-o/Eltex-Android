@@ -23,4 +23,6 @@
     <string name="network_error">Network error</string>
     <string name="unknown_error">Unknown error</string>
     <string name="retry">Retry</string>
+    <string name="skeleton_likes">10</string>
+    <string name="skeleton_text">How do you feel about getting together?</string>
 </resources>

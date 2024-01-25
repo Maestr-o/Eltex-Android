@@ -22,6 +22,7 @@ import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentPostsBinding
 import com.eltex.androidschool.effecthandler.PostEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
+import com.eltex.androidschool.mapper.PostPagingModelMapper
 import com.eltex.androidschool.mapper.PostUiModelMapper
 import com.eltex.androidschool.model.PostMessage
 import com.eltex.androidschool.model.PostUiModel
@@ -98,6 +99,10 @@ class PostsFragment : Fragment() {
                     requireParentFragment().requireParentFragment().findNavController()
                         .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
                 }
+
+                override fun onRetryPageClickListener() {
+                    viewModel.accept(PostMessage.Retry)
+                }
             }
         )
 
@@ -133,6 +138,8 @@ class PostsFragment : Fragment() {
             override fun onChildViewDetachedFromWindow(view: View) = Unit
         })
 
+        val mapper = PostPagingModelMapper()
+
         viewModel.uiState
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
@@ -140,7 +147,6 @@ class PostsFragment : Fragment() {
                 val emptyError = state.emptyError
                 binding.errorGroup.isVisible = emptyError != null
                 binding.errorText.text = emptyError?.getText(requireContext())
-                binding.progress.isVisible = state.isEmptyLoading
                 state.singleError?.let {
                     Toast.makeText(
                         requireContext(),
@@ -149,7 +155,7 @@ class PostsFragment : Fragment() {
                     ).show()
                     viewModel.accept(PostMessage.HandleError)
                 }
-                adapter.submitList(state.posts)
+                adapter.submitList(mapper.map(state))
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
