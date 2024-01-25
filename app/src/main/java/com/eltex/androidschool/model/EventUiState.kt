@@ -1,7 +1,4 @@
-package com.eltex.androidschool.viewmodel
-
-import com.eltex.androidschool.model.EventUiModel
-import com.eltex.androidschool.model.NoteStatus
+package com.eltex.androidschool.model
 
 data class EventUiState(
     val events: List<EventUiModel> = emptyList(),

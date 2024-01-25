@@ -128,6 +128,7 @@ class PostsFragment : Fragment() {
 
         binding.list.addOnChildAttachStateChangeListener(object :
             RecyclerView.OnChildAttachStateChangeListener {
+
             override fun onChildViewAttachedToWindow(view: View) {
                 val count = adapter.itemCount
                 val position = binding.list.getChildAdapterPosition(view)

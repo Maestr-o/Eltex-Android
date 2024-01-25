@@ -22,15 +22,16 @@ import com.eltex.androidschool.api.EventsApi
 import com.eltex.androidschool.databinding.FragmentEventsBinding
 import com.eltex.androidschool.effecthandler.EventEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
+import com.eltex.androidschool.mapper.EventPagingModelMapper
 import com.eltex.androidschool.mapper.EventUiModelMapper
 import com.eltex.androidschool.model.EventMessage
 import com.eltex.androidschool.model.EventUiModel
+import com.eltex.androidschool.model.EventUiState
 import com.eltex.androidschool.reducer.EventReducer
 import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventStore
-import com.eltex.androidschool.viewmodel.EventUiState
 import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -102,6 +103,10 @@ class EventsFragment : Fragment() {
                     requireParentFragment().requireParentFragment().findNavController()
                         .navigate(R.id.action_bottomNavigationFragment_to_editEventFragment)
                 }
+
+                override fun onRetryPageClickListener() {
+                    viewModel.accept(EventMessage.Retry)
+                }
             }
         )
 
@@ -138,6 +143,8 @@ class EventsFragment : Fragment() {
             override fun onChildViewDetachedFromWindow(view: View) = Unit
         })
 
+        val mapper = EventPagingModelMapper()
+
         viewModel.uiState
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
@@ -145,7 +152,6 @@ class EventsFragment : Fragment() {
                 val emptyError = state.emptyError
                 binding.errorGroup.isVisible = emptyError != null
                 binding.errorText.text = emptyError?.getText(requireContext())
-                binding.progress.isVisible = state.isEmptyLoading
                 state.singleError?.let {
                     Toast.makeText(
                         requireContext(),
@@ -154,7 +160,7 @@ class EventsFragment : Fragment() {
                     ).show()
                     viewModel.accept(EventMessage.HandleError)
                 }
-                adapter.submitList(state.events)
+                adapter.submitList(mapper.map(state))
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

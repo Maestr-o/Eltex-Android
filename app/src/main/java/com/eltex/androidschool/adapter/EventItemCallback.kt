@@ -24,6 +24,9 @@ class EventItemCallback : ItemCallback<EventUiModel>() {
             likes = newItem.likes.takeIf {
                 it != oldItem.likes
             },
+            content = newItem.content.takeIf {
+                it != oldItem.content
+            }
         )
             .takeIf { it.isNotEmpty() }
 }

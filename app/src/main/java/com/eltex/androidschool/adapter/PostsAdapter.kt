@@ -96,11 +96,11 @@ class PostsAdapter(
         return ErrorViewHolder(binding)
     }
 
-    private fun createProgressViewHolder(parent: ViewGroup): ProgressViewHolder {
+    private fun createProgressViewHolder(parent: ViewGroup): ProgressPostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = CardPostSkeletonBinding.inflate(inflater, parent, false)
 
-        return ProgressViewHolder(binding)
+        return ProgressPostViewHolder(binding)
     }
 
     override fun onBindViewHolder(

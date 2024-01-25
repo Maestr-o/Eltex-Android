@@ -2,15 +2,15 @@ package com.eltex.androidschool.reducer
 
 import com.eltex.androidschool.model.EventEffect
 import com.eltex.androidschool.model.EventMessage
+import com.eltex.androidschool.model.EventUiState
 import com.eltex.androidschool.model.NoteStatus
 import com.eltex.androidschool.mvi.Reducer
 import com.eltex.androidschool.mvi.ReducerResult
 import com.eltex.androidschool.utils.Either
-import com.eltex.androidschool.viewmodel.EventUiState
 
 class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
 
-    private companion object {
+    companion object {
         const val PAGE_SIZE = 10
         const val INITIAL_LOAD_SIZE = PAGE_SIZE * 2
     }
@@ -55,16 +55,18 @@ class EventReducer : Reducer<EventUiState, EventEffect, EventMessage> {
             EventEffect.Participate(message.event)
         )
 
-        EventMessage.LoadNextPage -> {
-            val nextId = old.events.lastOrNull()?.id
-            if (nextId == null || old.isNextPageLoading) {
-                ReducerResult(old)
-            } else {
-                ReducerResult(
-                    old.copy(status = NoteStatus.NextPageLoading),
-                    EventEffect.LoadNextPage(nextId, PAGE_SIZE),
-                )
-            }
+        EventMessage.Retry -> ReducerResult(
+            old.copy(status = NoteStatus.NextPageLoading),
+            EventEffect.LoadNextPage(old.events.last().id, PAGE_SIZE),
+        )
+
+        EventMessage.LoadNextPage -> if (old.status == NoteStatus.Idle()) {
+            ReducerResult(
+                old.copy(status = NoteStatus.NextPageLoading),
+                EventEffect.LoadNextPage(old.events.last().id, PAGE_SIZE),
+            )
+        } else {
+            ReducerResult(old)
         }
 
         EventMessage.Refresh -> ReducerResult(

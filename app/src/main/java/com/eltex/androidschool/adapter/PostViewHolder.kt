@@ -16,6 +16,9 @@ class PostViewHolder(
         if (payload.likes != null) {
             updateLikeCount(payload.likes)
         }
+        if (payload.content != null) {
+            updateContent(payload.content)
+        }
     }
 
     fun bindPost(post: PostUiModel) {
@@ -37,5 +40,9 @@ class PostViewHolder(
 
     private fun updateLikeCount(likes: Int) {
         binding.like.text = likes.toString()
+    }
+
+    private fun updateContent(content: String) {
+        binding.content.text = content
     }
 }

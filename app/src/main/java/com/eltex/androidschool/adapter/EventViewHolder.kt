@@ -22,6 +22,9 @@ class EventViewHolder(
         if (payload.likes != null) {
             updateLikeCount(payload.likes)
         }
+        if (payload.content != null) {
+            updateContent(payload.content)
+        }
     }
 
     fun bindEvent(event: EventUiModel) {
@@ -60,5 +63,9 @@ class EventViewHolder(
 
     private fun updateParticipateCount(participants: Int) {
         binding.participate.text = participants.toString()
+    }
+
+    private fun updateContent(content: String) {
+        binding.content.text = content
     }
 }

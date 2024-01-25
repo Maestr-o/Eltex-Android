@@ -6,6 +6,7 @@ sealed interface EventMessage {
     // => к серверу
     data object LoadNextPage : EventMessage
     data object Refresh : EventMessage
+    data object Retry : EventMessage
     data class Like(val event: EventUiModel) : EventMessage
     data class Participate(val event: EventUiModel) : EventMessage
     data class Delete(val event: EventUiModel) : EventMessage
