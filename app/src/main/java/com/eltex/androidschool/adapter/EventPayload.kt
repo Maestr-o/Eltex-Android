@@ -8,5 +8,5 @@ data class EventPayload(
     val content: String? = null,
 ) {
     fun isNotEmpty(): Boolean =
-        ((participated != null) || (liked != null) || (likes != null) || (participants != null) || (content != null))
+        participated != null || liked != null || likes != null || participants != null || content != null
 }

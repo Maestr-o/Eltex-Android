@@ -100,6 +100,22 @@ class NewPostFragment : Fragment() {
             viewModel.setFile(null)
         }
 
+        binding.geo.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.not_implemented),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        binding.user.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.not_implemented),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         viewModel.state.onEach { state ->
             if (state.result != null) {
                 requireActivity().supportFragmentManager.setFragmentResult(POST_UPDATED, bundleOf())

@@ -1,5 +1,6 @@
 package com.eltex.androidschool.adapter
 
+import android.graphics.Bitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -8,6 +9,10 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardPostBinding
 import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.PostUiModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PostViewHolder(
     private val binding: CardPostBinding,
@@ -32,9 +37,14 @@ class PostViewHolder(
         binding.content.text = post.content
         binding.author.text = post.author
         binding.published.text = post.published
-        binding.authorInitials.text = post.author.take(1)
         updateLikeIcon(post.likedByMe)
         updateLikeCount(post.likes)
+        setDefaultAvatar(post.author.take(1))
+        if (post.authorAvatar != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                updateAvatar(post.authorAvatar)
+            }
+        }
         if (post.attachment != null) {
             binding.image.isVisible = true
             updateAttachment(post.attachment)
@@ -63,5 +73,32 @@ class PostViewHolder(
         Glide.with(binding.image)
             .load(attachment.url)
             .into(binding.image)
+    }
+
+    private fun setDefaultAvatar(letter: String) {
+        binding.authorInitials.isVisible = true
+        binding.authorInitials.text = letter
+        Glide.with(binding.avatar)
+            .load(R.drawable.avatar_background)
+            .into(binding.avatar)
+    }
+
+    private suspend fun updateAvatar(avatar: String) = withContext(Dispatchers.IO) {
+        try {
+            val avatarBitmap: Bitmap = Glide.with(binding.avatar)
+                .asBitmap()
+                .load(avatar)
+                .submit()
+                .get()
+
+            withContext(Dispatchers.Main) {
+                Glide.with(binding.avatar)
+                    .load(avatarBitmap)
+                    .circleCrop()
+                    .into(binding.avatar)
+                binding.authorInitials.isGone = true
+            }
+        } catch (_: Exception) {
+        }
     }
 }

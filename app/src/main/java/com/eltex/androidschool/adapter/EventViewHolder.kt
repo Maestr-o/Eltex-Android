@@ -1,9 +1,17 @@
 package com.eltex.androidschool.adapter
 
+import android.graphics.Bitmap
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardEventBinding
 import com.eltex.androidschool.model.EventUiModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EventViewHolder(
     private val binding: CardEventBinding,
@@ -31,10 +39,15 @@ class EventViewHolder(
         binding.content.text = event.content
         binding.author.text = event.author
         binding.published.text = event.published
-        binding.authorInitials.text = event.author.take(1)
         binding.eventType.text = event.type.toString()
         binding.eventTime.text = event.datetime
         binding.link.text = event.link
+        setDefaultAvatar(event.author.take(1))
+        if (event.authorAvatar != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                updateAvatar(event.authorAvatar)
+            }
+        }
         updateLikeIcon(event.likedByMe)
         updateParticipateIcon(event.participatedByMe)
         updateLikeCount(event.likes)
@@ -67,5 +80,32 @@ class EventViewHolder(
 
     private fun updateContent(content: String) {
         binding.content.text = content
+    }
+
+    private fun setDefaultAvatar(letter: String) {
+        binding.authorInitials.isVisible = true
+        binding.authorInitials.text = letter
+        Glide.with(binding.avatar)
+            .load(R.drawable.avatar_background)
+            .into(binding.avatar)
+    }
+
+    private suspend fun updateAvatar(avatar: String) = withContext(Dispatchers.IO) {
+        try {
+            val avatarBitmap: Bitmap = Glide.with(binding.avatar)
+                .asBitmap()
+                .load(avatar)
+                .submit()
+                .get()
+
+            withContext(Dispatchers.Main) {
+                Glide.with(binding.avatar)
+                    .load(avatarBitmap)
+                    .circleCrop()
+                    .into(binding.avatar)
+                binding.authorInitials.isGone = true
+            }
+        } catch (_: Exception) {
+        }
     }
 }

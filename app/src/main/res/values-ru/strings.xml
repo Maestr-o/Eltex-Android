@@ -29,4 +29,5 @@
     <string name="skeleton_link">https://m2.material.io/components/cards</string>
     <string name="remove">Удалить</string>
     <string name="photo">фотография</string>
+    <string name="not_implemented">Не реализовано</string>
 </resources>

@@ -28,4 +28,5 @@
     <string name="skeleton_link">https://m2.material.io/components/cards</string>
     <string name="remove">Remove</string>
     <string name="photo">photo</string>
+    <string name="not_implemented">Not implemented</string>
 </resources>
