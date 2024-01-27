@@ -22,6 +22,7 @@ class PostUiModelMapper {
             link = link,
             likedByMe = likedByMe,
             likes = likeOwnerIds.size,
+            attachment = attachment,
         )
     }
 }

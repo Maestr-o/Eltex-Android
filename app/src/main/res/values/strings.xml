@@ -26,4 +26,6 @@
     <string name="skeleton_likes">10</string>
     <string name="skeleton_text">How do you feel about getting together?</string>
     <string name="skeleton_link">https://m2.material.io/components/cards</string>
+    <string name="remove">Remove</string>
+    <string name="photo">photo</string>
 </resources>

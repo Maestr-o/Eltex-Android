@@ -1,26 +1,59 @@
 package com.eltex.androidschool.repository
 
+import android.content.ContentResolver
+import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.api.PostsApi
+import com.eltex.androidschool.model.Attachment
+import com.eltex.androidschool.model.FileModel
+import com.eltex.androidschool.model.Media
 import com.eltex.androidschool.model.Post
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class NetworkPostRepository(
-    private val api: PostsApi
+    private val postsApi: PostsApi,
+    private val mediaApi: MediaApi,
+    private val contentResolver: ContentResolver,
 ) : PostRepository {
 
-    override suspend fun getLatest(count: Int): List<Post> = api.getLatest(count)
+    override suspend fun getLatest(count: Int): List<Post> = postsApi.getLatest(count)
 
-    override suspend fun getBefore(id: Long, count: Int): List<Post> = api.getBefore(id, count)
+    override suspend fun getBefore(id: Long, count: Int): List<Post> = postsApi.getBefore(id, count)
 
-    override suspend fun likeById(id: Long): Post = api.like(id)
+    override suspend fun likeById(id: Long): Post = postsApi.like(id)
 
-    override suspend fun unlikeById(id: Long): Post = api.unlike(id)
+    override suspend fun unlikeById(id: Long): Post = postsApi.unlike(id)
 
-    override suspend fun savePost(id: Long, content: String): Post = api.save(
-        Post(
+    override suspend fun savePost(id: Long, content: String, fileModel: FileModel?): Post {
+        val post = fileModel?.let {
+            val media = upload(it)
+            Post(
+                id = id,
+                content = content,
+                attachment = Attachment(media.url, it.type)
+            )
+        } ?: Post(
             id = id,
-            content = content,
+            content = content
         )
-    )
+        return postsApi.save(post)
+    }
 
-    override suspend fun deleteById(id: Long) = api.delete(id)
+    override suspend fun deleteById(id: Long) = postsApi.delete(id)
+
+    private suspend fun upload(fileModel: FileModel): Media =
+        mediaApi.upload(
+            MultipartBody.Part.createFormData(
+                "file",
+                "file",
+                withContext(Dispatchers.IO) {
+                    requireNotNull(contentResolver.openInputStream(fileModel.uri)).use {
+                        it.readBytes()
+                    }
+                        .toRequestBody()
+                }
+            )
+        )
 }

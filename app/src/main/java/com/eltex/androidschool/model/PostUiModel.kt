@@ -8,6 +8,7 @@ data class PostUiModel(
     val authorAvatar: String? = null,
     val content: String = "",
     val published: String = "",
+    val attachment: Attachment? = null,
     val link: String? = null,
     val likedByMe: Boolean = false,
     val likes: Int = 0,

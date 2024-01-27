@@ -10,6 +10,7 @@ data class EventUiModel(
     val datetime: String = "",
     val published: String = "",
     val type: EventType = EventType.OFFLINE,
+    val attachment: Attachment? = null,
     val likedByMe: Boolean = false,
     val participatedByMe: Boolean = false,
     val link: String? = null,

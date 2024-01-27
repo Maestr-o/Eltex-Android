@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.PostsAdapter
+import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentPostsBinding
 import com.eltex.androidschool.effecthandler.PostEffectHandler
@@ -52,7 +53,11 @@ class PostsFragment : Fragment() {
                         PostStore(
                             reducer = PostReducer(),
                             effectHandler = PostEffectHandler(
-                                NetworkPostRepository(PostsApi.INSTANCE),
+                                NetworkPostRepository(
+                                    PostsApi.INSTANCE,
+                                    MediaApi.INSTANCE,
+                                    requireContext().contentResolver,
+                                ),
                                 PostUiModelMapper()
                             ),
                             initMessages = setOf(PostMessage.Refresh),
@@ -66,7 +71,13 @@ class PostsFragment : Fragment() {
         val editPostViewModel by activityViewModels<EditPostViewModel> {
             viewModelFactory {
                 initializer {
-                    EditPostViewModel(NetworkPostRepository(PostsApi.INSTANCE))
+                    EditPostViewModel(
+                        NetworkPostRepository(
+                            PostsApi.INSTANCE,
+                            MediaApi.INSTANCE,
+                            requireContext().contentResolver,
+                        )
+                    )
                 }
             }
         }

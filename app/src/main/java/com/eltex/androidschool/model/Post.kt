@@ -22,6 +22,8 @@ data class Post(
     @SerialName("published")
     @Serializable(InstantSerializer::class)
     val published: Instant = Instant.now(),
+    @SerialName("attachment")
+    val attachment: Attachment? = null,
     @SerialName("coords")
     val coords: Coordinates? = null,
     @SerialName("link")
@@ -30,8 +32,6 @@ data class Post(
     val mentionedMe: Boolean = false,
     @SerialName("likedByMe")
     val likedByMe: Boolean = false,
-    @SerialName("attachment")
-    val attachment: Attachment? = null,
     @SerialName("likeOwnerIds")
     val likeOwnerIds: Set<Long> = emptySet(),
 )

@@ -21,6 +21,9 @@ class PostItemCallback : ItemCallback<PostUiModel>() {
             content = newItem.content.takeIf {
                 it != oldItem.content
             },
+            attachment = newItem.attachment.takeIf {
+                it != oldItem.attachment
+            }
         )
             .takeIf { it.isNotEmpty() }
 }

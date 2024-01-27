@@ -27,4 +27,6 @@
     <string name="skeleton_likes">10</string>
     <string name="skeleton_text">Как вы относитесь к тому, чтобы собраться?</string>
     <string name="skeleton_link">https://m2.material.io/components/cards</string>
+    <string name="remove">Удалить</string>
+    <string name="photo">фотография</string>
 </resources>

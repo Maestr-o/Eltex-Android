@@ -1,7 +1,9 @@
 package com.eltex.androidschool.viewmodel
 
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Post
 import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.model.Status
@@ -20,13 +22,27 @@ class EditPostViewModel(
 
     fun update(post: PostUiModel) {
         _state.update {
-            it.copy(
-                result = Post(
-                    id = post.id,
-                    content = post.content,
-                    likedByMe = post.likedByMe,
+            if (post.attachment != null) {
+                it.copy(
+                    result = Post(
+                        id = post.id,
+                        content = post.content,
+                        likedByMe = post.likedByMe,
+                    ),
+                    file = FileModel(
+                        uri = post.attachment.url.toUri(),
+                        type = post.attachment.attachmentType,
+                    )
                 )
-            )
+            } else {
+                it.copy(
+                    result = Post(
+                        id = post.id,
+                        content = post.content,
+                        likedByMe = post.likedByMe,
+                    )
+                )
+            }
         }
     }
 
@@ -39,12 +55,18 @@ class EditPostViewModel(
         if (post != null) {
             viewModelScope.launch {
                 try {
-                    val data = repository.savePost(post.id, content)
+                    val data = repository.savePost(post.id, content, state.value.file)
                     _state.update { it.copy(result = data, status = Status.Idle) }
                 } catch (e: Exception) {
                     _state.update { it.copy(status = Status.Error(e)) }
                 }
             }
+        }
+    }
+
+    fun setFile(fileModel: FileModel?) {
+        _state.update {
+            it.copy(file = fileModel)
         }
     }
 

@@ -1,27 +1,17 @@
 package com.eltex.androidschool.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class AttachmentType {
+    @SerialName("IMAGE")
     IMAGE,
+
+    @SerialName("AUDIO")
     AUDIO,
+
+    @SerialName("VIDEO")
     VIDEO,
     ;
-
-    override fun toString(): String {
-        return when (this) {
-            IMAGE -> "Image"
-            AUDIO -> "Audio"
-            VIDEO -> "Video"
-        }
-    }
-
-    companion object {
-        fun fromString(type: String): AttachmentType {
-            return when (type) {
-                "IMAGE", "Image", "image" -> IMAGE
-                "AUDIO", "Audio", "audio" -> AUDIO
-                "VIDEO", "Video", "video" -> VIDEO
-                else -> error("Error attachment type: $type")
-            }
-        }
-    }
 }

@@ -27,14 +27,14 @@ data class Event(
     val published: Instant = Instant.now(),
     @SerialName("coords")
     val coords: Coordinates? = null,
+    @SerialName("attachment")
+    val attachment: Attachment? = null,
     @SerialName("type")
     val type: EventType = EventType.OFFLINE,
     @SerialName("likedByMe")
     val likedByMe: Boolean = false,
     @SerialName("participatedByMe")
     val participatedByMe: Boolean = false,
-    @SerialName("attachment")
-    val attachment: Attachment? = null,
     @SerialName("link")
     val link: String? = null,
     @SerialName("likeOwnerIds")

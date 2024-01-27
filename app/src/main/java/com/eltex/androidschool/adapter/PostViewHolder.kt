@@ -1,8 +1,12 @@
 package com.eltex.androidschool.adapter
 
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardPostBinding
+import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.PostUiModel
 
 class PostViewHolder(
@@ -19,6 +23,9 @@ class PostViewHolder(
         if (payload.content != null) {
             updateContent(payload.content)
         }
+        if (payload.attachment != null) {
+            updateAttachment(payload.attachment)
+        }
     }
 
     fun bindPost(post: PostUiModel) {
@@ -28,6 +35,12 @@ class PostViewHolder(
         binding.authorInitials.text = post.author.take(1)
         updateLikeIcon(post.likedByMe)
         updateLikeCount(post.likes)
+        if (post.attachment != null) {
+            binding.image.isVisible = true
+            updateAttachment(post.attachment)
+        } else {
+            binding.image.isGone = true
+        }
     }
 
     private fun updateLikeIcon(liked: Boolean) {
@@ -44,5 +57,11 @@ class PostViewHolder(
 
     private fun updateContent(content: String) {
         binding.content.text = content
+    }
+
+    private fun updateAttachment(attachment: Attachment) {
+        Glide.with(binding.image)
+            .load(attachment.url)
+            .into(binding.image)
     }
 }
