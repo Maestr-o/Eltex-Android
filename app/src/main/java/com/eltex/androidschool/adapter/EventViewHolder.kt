@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardEventBinding
+import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.EventUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,9 @@ class EventViewHolder(
         if (payload.content != null) {
             updateContent(payload.content)
         }
+        if (payload.attachment != null) {
+            updateAttachment(payload.attachment)
+        }
     }
 
     fun bindEvent(event: EventUiModel) {
@@ -41,17 +45,32 @@ class EventViewHolder(
         binding.published.text = event.published
         binding.eventType.text = event.type.toString()
         binding.eventTime.text = event.datetime
-        binding.link.text = event.link
+        setLink(event.link)
         setDefaultAvatar(event.author.take(1))
         if (event.authorAvatar != null) {
             CoroutineScope(Dispatchers.Main).launch {
                 updateAvatar(event.authorAvatar)
             }
         }
+        if (event.attachment != null) {
+            binding.image.isVisible = true
+            updateAttachment(event.attachment)
+        } else {
+            binding.image.isGone = true
+        }
         updateLikeIcon(event.likedByMe)
         updateParticipateIcon(event.participatedByMe)
         updateLikeCount(event.likes)
         updateParticipateCount(event.participants)
+    }
+
+    private fun setLink(link: String?) {
+        if (link.isNullOrBlank()) {
+            binding.link.isGone = true
+        } else {
+            binding.link.isVisible = true
+            binding.link.text = link
+        }
     }
 
     private fun updateLikeIcon(liked: Boolean) {
@@ -80,6 +99,12 @@ class EventViewHolder(
 
     private fun updateContent(content: String) {
         binding.content.text = content
+    }
+
+    private fun updateAttachment(attachment: Attachment) {
+        Glide.with(binding.image)
+            .load(attachment.url)
+            .into(binding.image)
     }
 
     private fun setDefaultAvatar(letter: String) {

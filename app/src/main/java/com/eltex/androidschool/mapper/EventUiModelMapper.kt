@@ -26,6 +26,7 @@ class EventUiModelMapper {
             link = link,
             likes = likeOwnerIds.size,
             participants = participantsIds.size,
+            attachment = attachment,
         )
     }
 }

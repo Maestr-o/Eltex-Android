@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.api.EventsApi
+import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.databinding.FragmentEventsBinding
 import com.eltex.androidschool.effecthandler.EventEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
@@ -52,7 +53,11 @@ class EventsFragment : Fragment() {
                         EventStore(
                             reducer = EventReducer(),
                             effectHandler = EventEffectHandler(
-                                NetworkEventRepository(EventsApi.INSTANCE),
+                                NetworkEventRepository(
+                                    EventsApi.INSTANCE,
+                                    MediaApi.INSTANCE,
+                                    requireContext().contentResolver,
+                                ),
                                 EventUiModelMapper()
                             ),
                             initMessages = setOf(EventMessage.Refresh),
@@ -66,7 +71,13 @@ class EventsFragment : Fragment() {
         val editEventViewModel by activityViewModels<EditEventViewModel> {
             viewModelFactory {
                 initializer {
-                    EditEventViewModel(NetworkEventRepository(EventsApi.INSTANCE))
+                    EditEventViewModel(
+                        NetworkEventRepository(
+                            EventsApi.INSTANCE,
+                            MediaApi.INSTANCE,
+                            requireContext().contentResolver,
+                        )
+                    )
                 }
             }
         }
