@@ -22,24 +22,22 @@ class EditPostViewModel(
 
     fun update(post: PostUiModel) {
         _state.update {
-            if (post.attachment != null) {
+            it.copy(
+                result = Post(
+                    id = post.id,
+                    content = post.content,
+                    likedByMe = post.likedByMe,
+                ),
+                file = null,
+            )
+        }
+        val attachment = post.attachment
+        if (attachment != null) {
+            _state.update {
                 it.copy(
-                    result = Post(
-                        id = post.id,
-                        content = post.content,
-                        likedByMe = post.likedByMe,
-                    ),
                     file = FileModel(
-                        uri = post.attachment.url.toUri(),
-                        type = post.attachment.attachmentType,
-                    )
-                )
-            } else {
-                it.copy(
-                    result = Post(
-                        id = post.id,
-                        content = post.content,
-                        likedByMe = post.likedByMe,
+                        attachment.url.toUri(),
+                        attachment.attachmentType,
                     )
                 )
             }
@@ -66,7 +64,7 @@ class EditPostViewModel(
 
     fun setFile(fileModel: FileModel?) {
         _state.update {
-            it.copy(file = fileModel)
+            state.value.copy(file = fileModel)
         }
     }
 

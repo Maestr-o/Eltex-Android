@@ -11,12 +11,15 @@ import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.EventUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EventViewHolder(
     private val binding: CardEventBinding,
 ) : ViewHolder(binding.root) {
+
+    private var avatarJob: Job? = null
 
     fun bindEvent(payload: EventPayload) {
         if (payload.participated != null) {
@@ -40,15 +43,20 @@ class EventViewHolder(
     }
 
     fun bindEvent(event: EventUiModel) {
+        cancelAvatarLoading()
+        setDefaultAvatar(event.author.take(1))
         binding.content.text = event.content
         binding.author.text = event.author
         binding.published.text = event.published
         binding.eventType.text = event.type.toString()
         binding.eventTime.text = event.datetime
         setLink(event.link)
-        setDefaultAvatar(event.author.take(1))
+        updateLikeIcon(event.likedByMe)
+        updateParticipateIcon(event.participatedByMe)
+        updateLikeCount(event.likes)
+        updateParticipateCount(event.participants)
         if (event.authorAvatar != null) {
-            CoroutineScope(Dispatchers.Main).launch {
+            avatarJob = CoroutineScope(Dispatchers.Main).launch {
                 updateAvatar(event.authorAvatar)
             }
         }
@@ -58,10 +66,6 @@ class EventViewHolder(
         } else {
             binding.image.isGone = true
         }
-        updateLikeIcon(event.likedByMe)
-        updateParticipateIcon(event.participatedByMe)
-        updateLikeCount(event.likes)
-        updateParticipateCount(event.participants)
     }
 
     private fun setLink(link: String?) {
@@ -132,5 +136,9 @@ class EventViewHolder(
             }
         } catch (_: Exception) {
         }
+    }
+
+    fun cancelAvatarLoading() {
+        avatarJob?.cancel()
     }
 }

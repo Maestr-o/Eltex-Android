@@ -126,4 +126,11 @@ class PostsAdapter(
             PagingModel.Progress -> Unit
         }
     }
+
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is PostViewHolder) {
+            holder.cancelAvatarLoading()
+        }
+    }
 }

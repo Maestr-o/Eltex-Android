@@ -57,6 +57,8 @@ class EditEventFragment : Fragment() {
 
         val viewModel by activityViewModels<EditEventViewModel>()
 
+        binding.content.setText(viewModel.state.value.result?.content)
+
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {
                 viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
@@ -100,10 +102,6 @@ class EditEventFragment : Fragment() {
         }
 
         viewModel.state.onEach { state ->
-            if (state.result != null) {
-                binding.content.setText(state.result.content)
-            }
-
             val file = state.file
             when (file?.type) {
                 AttachmentType.IMAGE -> {

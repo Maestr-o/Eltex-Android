@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.EventsAdapter
 import com.eltex.androidschool.api.EventsApi
@@ -31,6 +30,7 @@ import com.eltex.androidschool.model.EventUiState
 import com.eltex.androidschool.reducer.EventReducer
 import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
+import com.eltex.androidschool.utils.onScrollToBottom
 import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventStore
 import com.eltex.androidschool.viewmodel.EventViewModel
@@ -141,18 +141,9 @@ class EventsFragment : Fragment() {
             viewModel.accept(EventMessage.Refresh)
         }
 
-        binding.list.addOnChildAttachStateChangeListener(object :
-            RecyclerView.OnChildAttachStateChangeListener {
-
-            override fun onChildViewAttachedToWindow(view: View) {
-                val count = adapter.itemCount
-                val position = binding.list.getChildAdapterPosition(view)
-                if (position != count - 1) return
-                viewModel.accept(EventMessage.LoadNextPage)
-            }
-
-            override fun onChildViewDetachedFromWindow(view: View) = Unit
-        })
+        binding.list.onScrollToBottom {
+            viewModel.accept(EventMessage.LoadNextPage)
+        }
 
         val mapper = EventPagingModelMapper()
 

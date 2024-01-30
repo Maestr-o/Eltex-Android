@@ -57,6 +57,8 @@ class EditPostFragment : Fragment() {
 
         val viewModel by activityViewModels<EditPostViewModel>()
 
+        binding.content.setText(viewModel.state.value.result?.content)
+
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {
                 viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
@@ -100,10 +102,6 @@ class EditPostFragment : Fragment() {
         }
 
         viewModel.state.onEach { state ->
-            if (state.result != null) {
-                binding.content.setText(state.result.content)
-            }
-
             val file = state.file
             when (file?.type) {
                 AttachmentType.IMAGE -> {

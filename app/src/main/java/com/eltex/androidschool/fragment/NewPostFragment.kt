@@ -153,6 +153,10 @@ class NewPostFragment : Fragment() {
 
                 if (content.isNotBlank()) {
                     viewModel.save(content)
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        POST_UPDATED,
+                        bundleOf()
+                    )
                 } else {
                     requireContext().toast(R.string.empty_error, true)
                 }

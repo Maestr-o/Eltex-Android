@@ -11,12 +11,15 @@ import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.PostUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PostViewHolder(
     private val binding: CardPostBinding,
 ) : ViewHolder(binding.root) {
+
+    private var avatarJob: Job? = null
 
     fun bindPost(payload: PostPayload) {
         if (payload.liked != null) {
@@ -34,14 +37,15 @@ class PostViewHolder(
     }
 
     fun bindPost(post: PostUiModel) {
+        cancelAvatarLoading()
+        setDefaultAvatar(post.author.take(1))
         binding.content.text = post.content
         binding.author.text = post.author
         binding.published.text = post.published
         updateLikeIcon(post.likedByMe)
         updateLikeCount(post.likes)
-        setDefaultAvatar(post.author.take(1))
         if (post.authorAvatar != null) {
-            CoroutineScope(Dispatchers.Main).launch {
+            avatarJob = CoroutineScope(Dispatchers.Main).launch {
                 updateAvatar(post.authorAvatar)
             }
         }
@@ -100,5 +104,9 @@ class PostViewHolder(
             }
         } catch (_: Exception) {
         }
+    }
+
+    fun cancelAvatarLoading() {
+        avatarJob?.cancel()
     }
 }

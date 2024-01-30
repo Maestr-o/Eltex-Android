@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.PostsAdapter
 import com.eltex.androidschool.api.MediaApi
@@ -31,6 +30,7 @@ import com.eltex.androidschool.model.PostUiState
 import com.eltex.androidschool.reducer.PostReducer
 import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
+import com.eltex.androidschool.utils.onScrollToBottom
 import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostStore
 import com.eltex.androidschool.viewmodel.PostViewModel
@@ -137,18 +137,9 @@ class PostsFragment : Fragment() {
             viewModel.accept(PostMessage.Refresh)
         }
 
-        binding.list.addOnChildAttachStateChangeListener(object :
-            RecyclerView.OnChildAttachStateChangeListener {
-
-            override fun onChildViewAttachedToWindow(view: View) {
-                val count = adapter.itemCount
-                val position = binding.list.getChildAdapterPosition(view)
-                if (position != count - 1) return
-                viewModel.accept(PostMessage.LoadNextPage)
-            }
-
-            override fun onChildViewDetachedFromWindow(view: View) = Unit
-        })
+        binding.list.onScrollToBottom {
+            viewModel.accept(PostMessage.LoadNextPage)
+        }
 
         val mapper = PostPagingModelMapper()
 

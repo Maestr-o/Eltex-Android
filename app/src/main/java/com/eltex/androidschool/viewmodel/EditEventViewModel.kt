@@ -24,26 +24,25 @@ class EditEventViewModel(
 
     fun update(event: EventUiModel) {
         _state.update {
-            if (event.attachment != null) {
+            it.copy(
+                result = Event(
+                    id = event.id,
+                    content = event.content,
+                    likedByMe = event.likedByMe,
+                    type = EventType.ONLINE,
+                    datetime = Instant.now(),
+                    participatedByMe = event.participatedByMe,
+                ),
+                file = null,
+            )
+        }
+        val attachment = event.attachment
+        if (attachment != null) {
+            _state.update {
                 it.copy(
-                    result = Event(
-                        id = event.id,
-                        content = event.content,
-                        datetime = Instant.now(),
-                        type = EventType.ONLINE,
-                        likedByMe = event.likedByMe,
-                    ),
                     file = FileModel(
-                        uri = event.attachment.url.toUri(),
-                        type = event.attachment.attachmentType,
-                    )
-                )
-            } else {
-                it.copy(
-                    result = Event(
-                        id = event.id,
-                        content = event.content,
-                        likedByMe = event.likedByMe,
+                        attachment.url.toUri(),
+                        attachment.attachmentType,
                     )
                 )
             }
