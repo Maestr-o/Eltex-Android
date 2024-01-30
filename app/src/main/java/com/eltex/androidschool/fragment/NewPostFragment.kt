@@ -15,17 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
-import com.eltex.androidschool.api.MediaApi
-import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.model.AttachmentType
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Status
-import com.eltex.androidschool.repository.NetworkPostRepository
+import com.eltex.androidschool.utils.getDependencyContainer
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewPostViewModel
@@ -61,17 +57,7 @@ class NewPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
 
         val viewModel by viewModels<NewPostViewModel> {
-            viewModelFactory {
-                initializer {
-                    NewPostViewModel(
-                        repository = NetworkPostRepository(
-                            PostsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
-                }
-            }
+            getDependencyContainer().getNewPostViewModelFactory()
         }
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {

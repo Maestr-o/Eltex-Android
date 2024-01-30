@@ -17,7 +17,7 @@ import java.util.concurrent.CancellationException
 
 class PostEffectHandler(
     private val repository: PostRepository,
-    private val mapper: PostUiModelMapper,
+    private val mapper: PostUiModelMapper = PostUiModelMapper(),
 ) : EffectHandler<PostEffect, PostMessage> {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun connect(effects: Flow<PostEffect>): Flow<PostMessage> =

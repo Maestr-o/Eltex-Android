@@ -17,7 +17,7 @@ import java.util.concurrent.CancellationException
 
 class EventEffectHandler(
     private val repository: EventRepository,
-    private val mapper: EventUiModelMapper,
+    private val mapper: EventUiModelMapper = EventUiModelMapper(),
 ) : EffectHandler<EventEffect, EventMessage> {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun connect(effects: Flow<EventEffect>): Flow<EventMessage> =
