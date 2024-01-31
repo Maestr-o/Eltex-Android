@@ -21,16 +21,19 @@ import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.model.AttachmentType
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Status
-import com.eltex.androidschool.utils.getDependencyContainer
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewEventViewModel
+import com.eltex.androidschool.viewmodel.NewEventViewModelFactory
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
 
+@AndroidEntryPoint
 class NewEventFragment : Fragment() {
 
     companion object {
@@ -56,9 +59,13 @@ class NewEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<NewEventViewModel> {
-            getDependencyContainer().getNewEventViewModelFactory()
-        }
+        val viewModel by viewModels<NewEventViewModel>(
+            extrasProducer = {
+                defaultViewModelCreationExtras.withCreationCallback<NewEventViewModelFactory> { factory ->
+                    factory.create(0L)
+                }
+            }
+        )
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {

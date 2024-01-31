@@ -20,14 +20,15 @@ import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.mapper.PostPagingModelMapper
 import com.eltex.androidschool.model.PostMessage
 import com.eltex.androidschool.model.PostUiModel
-import com.eltex.androidschool.utils.getDependencyContainer
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
 import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class PostsFragment : Fragment() {
 
     override fun onCreateView(
@@ -37,13 +38,9 @@ class PostsFragment : Fragment() {
     ): View {
         val binding = FragmentPostsBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<PostViewModel> {
-            getDependencyContainer().getPostViewModelFactory()
-        }
+        val viewModel by viewModels<PostViewModel>()
 
-        val editPostViewModel by activityViewModels<EditPostViewModel> {
-            getDependencyContainer().getEditPostViewModelFactory()
-        }
+        val editPostViewModel by activityViewModels<EditPostViewModel>()
 
         val adapter = PostsAdapter(
             object : PostsAdapter.PostListener {

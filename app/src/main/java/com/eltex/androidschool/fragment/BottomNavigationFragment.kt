@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentBottomNavigationBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
 
     override fun onCreateView(

@@ -5,7 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     kotlin("plugin.serialization") version "1.9.21"
-    id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -63,6 +64,7 @@ android {
 
 dependencies {
     val navigationVersion = "2.7.6"
+    val daggerVersion = "2.50"
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -82,6 +84,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.dagger:hilt-android:$daggerVersion")
+    ksp("com.google.dagger:dagger-compiler:$daggerVersion")
+    ksp("com.google.dagger:hilt-compiler:$daggerVersion")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

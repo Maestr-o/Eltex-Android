@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
 import java.util.concurrent.CancellationException
+import javax.inject.Inject
 
-class EventEffectHandler(
+class EventEffectHandler @Inject constructor(
     private val repository: EventRepository,
-    private val mapper: EventUiModelMapper = EventUiModelMapper(),
+    private val mapper: EventUiModelMapper,
 ) : EffectHandler<EventEffect, EventMessage> {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun connect(effects: Flow<EventEffect>): Flow<EventMessage> =

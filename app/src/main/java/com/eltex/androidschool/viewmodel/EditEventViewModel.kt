@@ -9,13 +9,16 @@ import com.eltex.androidschool.model.EventUiModel
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.EventRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
+import javax.inject.Inject
 
-class EditEventViewModel(
+@HiltViewModel
+class EditEventViewModel @Inject constructor(
     private val repository: EventRepository,
 ) : ViewModel() {
 

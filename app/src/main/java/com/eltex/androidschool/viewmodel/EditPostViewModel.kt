@@ -8,12 +8,15 @@ import com.eltex.androidschool.model.Post
 import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.model.Status
 import com.eltex.androidschool.repository.PostRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EditPostViewModel(
+@HiltViewModel
+class EditPostViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
 

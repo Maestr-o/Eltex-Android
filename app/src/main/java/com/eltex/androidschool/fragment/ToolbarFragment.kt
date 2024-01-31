@@ -13,9 +13,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentToolbarBinding
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class ToolbarFragment : Fragment() {
 
     override fun onAttach(context: Context) {
