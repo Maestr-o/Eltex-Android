@@ -34,21 +34,36 @@ class NetworkEventRepository(
     override suspend fun unparticipateById(id: Long): Event = eventsApi.unparticipate(id)
 
     override suspend fun saveEvent(id: Long, content: String, fileModel: FileModel?): Event {
-        val event = fileModel?.let {
-            val media = upload(it)
-            Event(
+        val event = when {
+            fileModel?.uri?.scheme == "content" -> {
+                val media = upload(fileModel)
+                Event(
+                    id = id,
+                    content = content,
+                    datetime = Instant.now(),
+                    type = EventType.ONLINE,
+                    attachment = Attachment(media.url, fileModel.type)
+                )
+            }
+
+            fileModel != null -> {
+                Event(
+                    id = id,
+                    content = content,
+                    datetime = Instant.now(),
+                    type = EventType.ONLINE,
+                    attachment = Attachment(fileModel.uri.toString(), fileModel.type)
+                )
+            }
+
+            else -> Event(
                 id = id,
                 content = content,
-                datetime = Instant.now(),
                 type = EventType.ONLINE,
-                attachment = Attachment(media.url, it.type)
+                datetime = Instant.now(),
             )
-        } ?: Event(
-            id = id,
-            content = content,
-            type = EventType.ONLINE,
-            datetime = Instant.now(),
-        )
+        }
+
         return eventsApi.save(event)
     }
 

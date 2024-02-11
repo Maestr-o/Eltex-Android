@@ -27,17 +27,30 @@ class NetworkPostRepository(
     override suspend fun unlikeById(id: Long): Post = postsApi.unlike(id)
 
     override suspend fun savePost(id: Long, content: String, fileModel: FileModel?): Post {
-        val post = fileModel?.let {
-            val media = upload(it)
-            Post(
+        val post = when {
+            fileModel?.uri?.scheme == "content" -> {
+                val media = upload(fileModel)
+                Post(
+                    id = id,
+                    content = content,
+                    attachment = Attachment(media.url, fileModel.type)
+                )
+            }
+
+            fileModel != null -> {
+                Post(
+                    id = id,
+                    content = content,
+                    attachment = Attachment(fileModel.uri.toString(), fileModel.type)
+                )
+            }
+
+            else -> Post(
                 id = id,
                 content = content,
-                attachment = Attachment(media.url, it.type)
             )
-        } ?: Post(
-            id = id,
-            content = content
-        )
+        }
+
         return postsApi.save(post)
     }
 

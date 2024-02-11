@@ -1,25 +1,22 @@
 package com.eltex.androidschool.adapter
 
-import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.CardEventBinding
 import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.EventUiModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class EventViewHolder(
     private val binding: CardEventBinding,
 ) : ViewHolder(binding.root) {
-
-    private var avatarJob: Job? = null
 
     fun bindEvent(payload: EventPayload) {
         if (payload.participated != null) {
@@ -43,8 +40,7 @@ class EventViewHolder(
     }
 
     fun bindEvent(event: EventUiModel) {
-        cancelAvatarLoading()
-        setDefaultAvatar(event.author.take(1))
+        binding.authorInitials.text = event.author.take(1)
         binding.content.text = event.content
         binding.author.text = event.author
         binding.published.text = event.published
@@ -55,11 +51,7 @@ class EventViewHolder(
         updateParticipateIcon(event.participatedByMe)
         updateLikeCount(event.likes)
         updateParticipateCount(event.participants)
-        if (event.authorAvatar != null) {
-            avatarJob = CoroutineScope(Dispatchers.Main).launch {
-                updateAvatar(event.authorAvatar)
-            }
-        }
+        updateAvatar(event.authorAvatar)
         if (event.attachment != null) {
             binding.image.isVisible = true
             updateAttachment(event.attachment)
@@ -111,34 +103,34 @@ class EventViewHolder(
             .into(binding.image)
     }
 
-    private fun setDefaultAvatar(letter: String) {
+    private fun updateAvatar(avatar: String?) {
         binding.authorInitials.isVisible = true
-        binding.authorInitials.text = letter
         Glide.with(binding.avatar)
-            .load(R.drawable.avatar_background)
+            .load(avatar)
+            .circleCrop()
+            .addListener(
+                object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.authorInitials.isGone = true
+                        return false
+                    }
+                }
+            )
             .into(binding.avatar)
-    }
-
-    private suspend fun updateAvatar(avatar: String) = withContext(Dispatchers.IO) {
-        try {
-            val avatarBitmap: Bitmap = Glide.with(binding.avatar)
-                .asBitmap()
-                .load(avatar)
-                .submit()
-                .get()
-
-            withContext(Dispatchers.Main) {
-                Glide.with(binding.avatar)
-                    .load(avatarBitmap)
-                    .circleCrop()
-                    .into(binding.avatar)
-                binding.authorInitials.isGone = true
-            }
-        } catch (_: Exception) {
-        }
-    }
-
-    fun cancelAvatarLoading() {
-        avatarJob?.cancel()
     }
 }
