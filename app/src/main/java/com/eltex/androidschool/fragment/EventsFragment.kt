@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +31,6 @@ import com.eltex.androidschool.reducer.EventReducer
 import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
-import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventStore
 import com.eltex.androidschool.viewmodel.EventViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -68,20 +67,6 @@ class EventsFragment : Fragment() {
             }
         }
 
-        val editEventViewModel by activityViewModels<EditEventViewModel> {
-            viewModelFactory {
-                initializer {
-                    EditEventViewModel(
-                        NetworkEventRepository(
-                            EventsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
-                }
-            }
-        }
-
         val adapter = EventsAdapter(
             object : EventsAdapter.EventListener {
                 override fun onLikeClickListener(event: EventUiModel) {
@@ -110,9 +95,9 @@ class EventsFragment : Fragment() {
                 }
 
                 override fun onEditClickListener(event: EventUiModel) {
-                    editEventViewModel.update(event)
+                    val bundle = bundleOf(EditEventFragment.EDITING_EVENT to event)
                     requireParentFragment().requireParentFragment().findNavController()
-                        .navigate(R.id.action_bottomNavigationFragment_to_editEventFragment)
+                        .navigate(R.id.action_bottomNavigationFragment_to_editEventFragment, bundle)
                 }
 
                 override fun onRetryPageClickListener() {

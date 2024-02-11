@@ -8,22 +8,30 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
+import com.eltex.androidschool.api.EventsApi
+import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.model.AttachmentType
+import com.eltex.androidschool.model.EventUiModel
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Status
+import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.viewmodel.EditEventViewModel
+import com.eltex.androidschool.viewmodel.NewEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -34,6 +42,7 @@ class EditEventFragment : Fragment() {
 
     companion object {
         const val EVENT_UPDATED = "EVENT_UPDATED"
+        const val EDITING_EVENT = "EDITING_EVENT"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
@@ -55,9 +64,34 @@ class EditEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val viewModel by activityViewModels<EditEventViewModel>()
+        val event = arguments?.getSerializable(EDITING_EVENT) as EventUiModel
+        binding.content.setText(event.content)
 
-        binding.content.setText(viewModel.state.value.result?.content)
+        val viewModel by viewModels<NewEventViewModel> {
+            viewModelFactory {
+                initializer {
+                    NewEventViewModel(
+                        eventId = event.id,
+                        repository = NetworkEventRepository(
+                            EventsApi.INSTANCE,
+                            MediaApi.INSTANCE,
+                            requireContext().contentResolver,
+                        )
+                    )
+                }
+            }
+        }
+
+        if (savedInstanceState == null) {
+            if (event.attachment != null) {
+                viewModel.setFile(
+                    FileModel(
+                        event.attachment.url.toUri(),
+                        event.attachment.attachmentType
+                    )
+                )
+            }
+        }
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {
@@ -102,6 +136,14 @@ class EditEventFragment : Fragment() {
         }
 
         viewModel.state.onEach { state ->
+            if (state.result != null) {
+                requireActivity().supportFragmentManager.setFragmentResult(
+                    NewEventFragment.EVENT_UPDATED,
+                    bundleOf()
+                )
+                findNavController().navigateUp()
+            }
+
             val file = state.file
             when (file?.type) {
                 AttachmentType.IMAGE -> {
@@ -134,12 +176,11 @@ class EditEventFragment : Fragment() {
                 val content = binding.content.text?.toString().orEmpty()
 
                 if (content.isNotBlank()) {
-                    viewModel.editById(content)
+                    viewModel.save(content)
                     requireActivity().supportFragmentManager.setFragmentResult(
                         EVENT_UPDATED,
                         bundleOf()
                     )
-                    findNavController().navigateUp()
                 } else {
                     requireContext().toast(R.string.empty_error, true)
                 }

@@ -1,5 +1,7 @@
 package com.eltex.androidschool.model
 
+import java.io.Serializable
+
 data class PostUiModel(
     val id: Long = 0L,
     val authorId: Long = 0L,
@@ -12,4 +14,4 @@ data class PostUiModel(
     val link: String? = null,
     val likedByMe: Boolean = false,
     val likes: Int = 0,
-)
+) : Serializable

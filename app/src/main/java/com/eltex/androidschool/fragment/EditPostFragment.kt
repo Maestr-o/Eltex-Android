@@ -8,22 +8,30 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
+import com.eltex.androidschool.api.MediaApi
+import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.model.AttachmentType
 import com.eltex.androidschool.model.FileModel
+import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.model.Status
+import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.viewmodel.EditPostViewModel
+import com.eltex.androidschool.viewmodel.NewPostViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -34,6 +42,7 @@ class EditPostFragment : Fragment() {
 
     companion object {
         const val POST_UPDATED = "POST_UPDATED"
+        const val EDITING_POST = "EDITING_POST"
     }
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
@@ -55,9 +64,34 @@ class EditPostFragment : Fragment() {
     ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
 
-        val viewModel by activityViewModels<EditPostViewModel>()
+        val post = arguments?.getSerializable(EDITING_POST) as PostUiModel
+        binding.content.setText(post.content)
 
-        binding.content.setText(viewModel.state.value.result?.content)
+        val viewModel by viewModels<NewPostViewModel> {
+            viewModelFactory {
+                initializer {
+                    NewPostViewModel(
+                        postId = post.id,
+                        repository = NetworkPostRepository(
+                            PostsApi.INSTANCE,
+                            MediaApi.INSTANCE,
+                            requireContext().contentResolver,
+                        )
+                    )
+                }
+            }
+        }
+
+        if (savedInstanceState == null) {
+            if (post.attachment != null) {
+                viewModel.setFile(
+                    FileModel(
+                        post.attachment.url.toUri(),
+                        post.attachment.attachmentType
+                    )
+                )
+            }
+        }
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {
@@ -102,6 +136,14 @@ class EditPostFragment : Fragment() {
         }
 
         viewModel.state.onEach { state ->
+            if (state.result != null) {
+                requireActivity().supportFragmentManager.setFragmentResult(
+                    NewPostFragment.POST_UPDATED,
+                    bundleOf()
+                )
+                findNavController().navigateUp()
+            }
+
             val file = state.file
             when (file?.type) {
                 AttachmentType.IMAGE -> {
@@ -134,16 +176,14 @@ class EditPostFragment : Fragment() {
                 val content = binding.content.text?.toString().orEmpty()
 
                 if (content.isNotBlank()) {
-                    viewModel.editById(content)
+                    viewModel.save(content)
                     requireActivity().supportFragmentManager.setFragmentResult(
                         POST_UPDATED,
                         bundleOf()
                     )
-                    findNavController().navigateUp()
                 } else {
                     requireContext().toast(R.string.empty_error, true)
                 }
-
                 toolbarViewModel.saveClicked(false)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

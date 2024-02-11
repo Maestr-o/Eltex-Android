@@ -1,5 +1,7 @@
 package com.eltex.androidschool.model
 
+import java.io.Serializable
+
 data class EventUiModel(
     val id: Long = 0L,
     val authorId: Long = 0L,
@@ -16,4 +18,4 @@ data class EventUiModel(
     val link: String? = null,
     val likes: Int = 0,
     val participants: Int = 0,
-)
+) : Serializable

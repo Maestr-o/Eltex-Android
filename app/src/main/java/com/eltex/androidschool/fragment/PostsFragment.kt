@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +31,6 @@ import com.eltex.androidschool.reducer.PostReducer
 import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
-import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostStore
 import com.eltex.androidschool.viewmodel.PostViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -68,20 +67,6 @@ class PostsFragment : Fragment() {
             }
         }
 
-        val editPostViewModel by activityViewModels<EditPostViewModel> {
-            viewModelFactory {
-                initializer {
-                    EditPostViewModel(
-                        NetworkPostRepository(
-                            PostsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
-                }
-            }
-        }
-
         val adapter = PostsAdapter(
             object : PostsAdapter.PostListener {
                 override fun onLikeClickListener(post: PostUiModel) {
@@ -106,9 +91,9 @@ class PostsFragment : Fragment() {
                 }
 
                 override fun onEditClickListener(post: PostUiModel) {
-                    editPostViewModel.update(post)
+                    val bundle = bundleOf(EditPostFragment.EDITING_POST to post)
                     requireParentFragment().requireParentFragment().findNavController()
-                        .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment)
+                        .navigate(R.id.action_bottomNavigationFragment_to_editPostFragment, bundle)
                 }
 
                 override fun onRetryPageClickListener() {
