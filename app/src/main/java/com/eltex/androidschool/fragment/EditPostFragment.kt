@@ -33,11 +33,13 @@ import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewPostViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
 
+@AndroidEntryPoint
 class EditPostFragment : Fragment() {
 
     companion object {

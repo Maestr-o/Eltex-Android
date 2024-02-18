@@ -1,7 +1,6 @@
 package com.eltex.androidschool.api
 
 import com.eltex.androidschool.model.Event
-import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -33,10 +32,4 @@ interface EventsApi {
 
     @DELETE("api/events/{id}")
     suspend fun delete(@Path("id") id: Long)
-
-    companion object {
-        val INSTANCE: EventsApi by lazy {
-            RetrofitFactory.INSTANCE.create()
-        }
-    }
 }

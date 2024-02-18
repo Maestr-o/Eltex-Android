@@ -33,11 +33,13 @@ import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewEventViewModel
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
 
+@AndroidEntryPoint
 class EditEventFragment : Fragment() {
 
     companion object {
@@ -67,20 +69,7 @@ class EditEventFragment : Fragment() {
         val event = arguments?.getSerializable(EDITING_EVENT) as EventUiModel
         binding.content.setText(event.content)
 
-        val viewModel by viewModels<NewEventViewModel> {
-            viewModelFactory {
-                initializer {
-                    NewEventViewModel(
-                        eventId = event.id,
-                        repository = NetworkEventRepository(
-                            EventsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
-                }
-            }
-        }
+        val viewModel by activityViewModels<EditEventViewModel>()
 
         if (savedInstanceState == null) {
             if (event.attachment != null) {

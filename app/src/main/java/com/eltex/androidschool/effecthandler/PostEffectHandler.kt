@@ -14,8 +14,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
 import java.util.concurrent.CancellationException
+import javax.inject.Inject
 
-class PostEffectHandler(
+class PostEffectHandler @Inject constructor(
     private val repository: PostRepository,
     private val mapper: PostUiModelMapper,
 ) : EffectHandler<PostEffect, PostMessage> {

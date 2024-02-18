@@ -15,26 +15,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
-import com.eltex.androidschool.api.EventsApi
-import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.model.AttachmentType
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.Status
-import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewEventViewModel
+import com.eltex.androidschool.viewmodel.NewEventViewModelFactory
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
 
+@AndroidEntryPoint
 class NewEventFragment : Fragment() {
 
     companion object {
@@ -60,19 +59,13 @@ class NewEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<NewEventViewModel> {
-            viewModelFactory {
-                initializer {
-                    NewEventViewModel(
-                        repository = NetworkEventRepository(
-                            EventsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
+        val viewModel by viewModels<NewEventViewModel>(
+            extrasProducer = {
+                defaultViewModelCreationExtras.withCreationCallback<NewEventViewModelFactory> { factory ->
+                    factory.create(0L)
                 }
             }
-        }
+        )
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             it?.let {

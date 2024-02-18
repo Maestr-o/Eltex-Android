@@ -13,8 +13,9 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.Instant
+import javax.inject.Inject
 
-class NetworkEventRepository(
+class NetworkEventRepository @Inject constructor(
     private val eventsApi: EventsApi,
     private val mediaApi: MediaApi,
     private val contentResolver: ContentResolver,

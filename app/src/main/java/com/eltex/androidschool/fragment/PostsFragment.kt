@@ -9,33 +9,28 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.PostsAdapter
-import com.eltex.androidschool.api.MediaApi
-import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentPostsBinding
-import com.eltex.androidschool.effecthandler.PostEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.mapper.PostPagingModelMapper
-import com.eltex.androidschool.mapper.PostUiModelMapper
 import com.eltex.androidschool.model.PostMessage
 import com.eltex.androidschool.model.PostUiModel
-import com.eltex.androidschool.model.PostUiState
-import com.eltex.androidschool.reducer.PostReducer
-import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
+import com.eltex.androidschool.viewmodel.EditPostViewModel
 import com.eltex.androidschool.viewmodel.PostStore
 import com.eltex.androidschool.viewmodel.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class PostsFragment : Fragment() {
 
     override fun onCreateView(
@@ -45,27 +40,7 @@ class PostsFragment : Fragment() {
     ): View {
         val binding = FragmentPostsBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<PostViewModel> {
-            viewModelFactory {
-                initializer {
-                    PostViewModel(
-                        PostStore(
-                            reducer = PostReducer(),
-                            effectHandler = PostEffectHandler(
-                                NetworkPostRepository(
-                                    PostsApi.INSTANCE,
-                                    MediaApi.INSTANCE,
-                                    requireContext().contentResolver,
-                                ),
-                                PostUiModelMapper()
-                            ),
-                            initMessages = setOf(PostMessage.Refresh),
-                            initState = PostUiState(),
-                        ),
-                    )
-                }
-            }
-        }
+        val viewModel by viewModels<PostViewModel>()
 
         val adapter = PostsAdapter(
             object : PostsAdapter.PostListener {

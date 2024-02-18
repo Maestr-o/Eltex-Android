@@ -12,30 +12,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.adapter.EventsAdapter
-import com.eltex.androidschool.api.EventsApi
-import com.eltex.androidschool.api.MediaApi
 import com.eltex.androidschool.databinding.FragmentEventsBinding
-import com.eltex.androidschool.effecthandler.EventEffectHandler
 import com.eltex.androidschool.itemdecoration.OffsetDecoration
 import com.eltex.androidschool.mapper.EventPagingModelMapper
-import com.eltex.androidschool.mapper.EventUiModelMapper
 import com.eltex.androidschool.model.EventMessage
 import com.eltex.androidschool.model.EventUiModel
-import com.eltex.androidschool.model.EventUiState
-import com.eltex.androidschool.reducer.EventReducer
-import com.eltex.androidschool.repository.NetworkEventRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
+import com.eltex.androidschool.viewmodel.EditEventViewModel
 import com.eltex.androidschool.viewmodel.EventStore
 import com.eltex.androidschool.viewmodel.EventViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class EventsFragment : Fragment() {
 
     override fun onCreateView(
@@ -45,27 +39,9 @@ class EventsFragment : Fragment() {
     ): View {
         val binding = FragmentEventsBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<EventViewModel> {
-            viewModelFactory {
-                initializer {
-                    EventViewModel(
-                        EventStore(
-                            reducer = EventReducer(),
-                            effectHandler = EventEffectHandler(
-                                NetworkEventRepository(
-                                    EventsApi.INSTANCE,
-                                    MediaApi.INSTANCE,
-                                    requireContext().contentResolver,
-                                ),
-                                EventUiModelMapper()
-                            ),
-                            initMessages = setOf(EventMessage.Refresh),
-                            initState = EventUiState(),
-                        ),
-                    )
-                }
-            }
-        }
+        val viewModel by viewModels<EventViewModel>()
+
+        val editEventViewModel by activityViewModels<EditEventViewModel>()
 
         val adapter = EventsAdapter(
             object : EventsAdapter.EventListener {

@@ -11,8 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
-class NetworkPostRepository(
+class NetworkPostRepository @Inject constructor(
     private val postsApi: PostsApi,
     private val mediaApi: MediaApi,
     private val contentResolver: ContentResolver,
