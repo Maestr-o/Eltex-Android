@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,8 +22,6 @@ import com.eltex.androidschool.model.PostMessage
 import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
-import com.eltex.androidschool.viewmodel.EditPostViewModel
-import com.eltex.androidschool.viewmodel.PostStore
 import com.eltex.androidschool.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn

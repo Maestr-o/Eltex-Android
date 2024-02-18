@@ -22,8 +22,6 @@ import com.eltex.androidschool.model.EventMessage
 import com.eltex.androidschool.model.EventUiModel
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.onScrollToBottom
-import com.eltex.androidschool.viewmodel.EditEventViewModel
-import com.eltex.androidschool.viewmodel.EventStore
 import com.eltex.androidschool.viewmodel.EventViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -40,8 +38,6 @@ class EventsFragment : Fragment() {
         val binding = FragmentEventsBinding.inflate(inflater, container, false)
 
         val viewModel by viewModels<EventViewModel>()
-
-        val editEventViewModel by activityViewModels<EditEventViewModel>()
 
         val adapter = EventsAdapter(
             object : EventsAdapter.EventListener {

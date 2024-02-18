@@ -16,24 +16,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.eltex.androidschool.R
-import com.eltex.androidschool.api.MediaApi
-import com.eltex.androidschool.api.PostsApi
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.model.AttachmentType
 import com.eltex.androidschool.model.FileModel
 import com.eltex.androidschool.model.PostUiModel
 import com.eltex.androidschool.model.Status
-import com.eltex.androidschool.repository.NetworkPostRepository
 import com.eltex.androidschool.utils.getText
 import com.eltex.androidschool.utils.toast
 import com.eltex.androidschool.viewmodel.NewPostViewModel
+import com.eltex.androidschool.viewmodel.NewPostViewModelFactory
 import com.eltex.androidschool.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -69,20 +66,13 @@ class EditPostFragment : Fragment() {
         val post = arguments?.getSerializable(EDITING_POST) as PostUiModel
         binding.content.setText(post.content)
 
-        val viewModel by viewModels<NewPostViewModel> {
-            viewModelFactory {
-                initializer {
-                    NewPostViewModel(
-                        postId = post.id,
-                        repository = NetworkPostRepository(
-                            PostsApi.INSTANCE,
-                            MediaApi.INSTANCE,
-                            requireContext().contentResolver,
-                        )
-                    )
+        val viewModel by viewModels<NewPostViewModel>(
+            extrasProducer = {
+                defaultViewModelCreationExtras.withCreationCallback<NewPostViewModelFactory> { factory ->
+                    factory.create(post.id)
                 }
             }
-        }
+        )
 
         if (savedInstanceState == null) {
             if (post.attachment != null) {
